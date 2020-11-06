@@ -33,7 +33,6 @@ namespace UsefulTools.Editor {
 		private readonly float                 _smallSpacePixelsCount = 5f;
 		private string                         _suffix                = "";
 
-		[MenuItem("Tools/UsefulTools", false, 0)]
 		[MenuItem("Tools/UsefulTools/Tools Window", false, 0)]
 		private static void Init() {
 			var window = GetWindow<UsefulToolsWindow>();
