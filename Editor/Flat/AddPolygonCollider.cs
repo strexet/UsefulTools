@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UsefulTools.Flat.Editor {
-	public class AddPolygonCollider : MonoBehaviour {
-	}
+namespace UsefulTools.Editor.Flat
+{
+    public class AddPolygonCollider : MonoBehaviour { }
 }

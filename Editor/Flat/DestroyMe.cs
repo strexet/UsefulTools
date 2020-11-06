@@ -1,7 +1,9 @@
 using UnityEngine;
 
-namespace UsefulTools.Flat.Editor {
-	public class DestroyMe : MonoBehaviour {
-		public Component ToDestroy;
-	}
+namespace UsefulTools.Editor.Flat
+{
+    public class DestroyMe : MonoBehaviour
+    {
+        public Component ToDestroy;
+    }
 }

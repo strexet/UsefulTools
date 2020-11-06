@@ -72,12 +72,12 @@ namespace UsefulTools.Editor
         void TakeScreenshot()
         {
             var filePath = GetPath();
-            
+
             SetFocusToGameView();
             ScreenCapture.CaptureScreenshot(filePath);
-            
+
             Debug.LogFormat("Screenshot recorded at {0} ({1})", filePath, UnityStats.screenRes);
-            
+
             ++nextScreenshotIndex;
             EditorPrefs.SetInt("EditorScreenshot.nextScreenshotIndex", nextScreenshotIndex);
         }

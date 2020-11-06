@@ -2,84 +2,90 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace UsefulTools.Editor
+namespace UsefulTools.Editor.Tools
 {
     [Serializable]
-    public class EditorList<T> where T : UnityEngine.Object
+    public class EditorList<T> where T : Object
     {
-        private int _count;
-        private readonly List<T> _list;
+        readonly List<T> list;
+        int count;
 
-        public int Count => _count;
+        public int Count => count;
 
-        public EditorList(int listCapacity) {
-            _list = new List<T>(listCapacity);
-            _count = listCapacity;
+        public EditorList(int listCapacity)
+        {
+            list = new List<T>(listCapacity);
+            count = listCapacity;
 
-            for ( var i = 0; i < listCapacity; i++ ) {
+            for (var i = 0; i < listCapacity; i++)
+            {
                 AddEmpty();
             }
         }
 
-        public void AddEmpty() {
-            _list.Add(default(T));
+        public void AddEmpty()
+        {
+            list.Add(default(T));
         }
 
-        public void UpdateAndDraw(ref List<T> _objectsToInsertRemove) {
-            _objectsToInsertRemove = _list;
+        public void UpdateAndDraw(ref List<T> objectsToInsertRemove)
+        {
+            objectsToInsertRemove = list;
 
             var newCount = -1;
 
-            if ( GUILayout.Button("Reset") ) {
+            if (GUILayout.Button("Reset"))
+            {
                 newCount = 1;
-                _objectsToInsertRemove.Clear();
-                _objectsToInsertRemove.Add(default);
-                _count = 1;
+                objectsToInsertRemove.Clear();
+                objectsToInsertRemove.Add(default(T));
+                count = 1;
             }
 
             GUILayout.BeginHorizontal();
 
-            if ( newCount < 0 ) {
+            if (newCount < 0)
+            {
                 newCount = Mathf.Max(
                     0,
-                    EditorGUILayout.DelayedIntField("Count:", _objectsToInsertRemove.Count));
+                    EditorGUILayout.DelayedIntField("Count:", objectsToInsertRemove.Count));
             }
 
-
-            if ( GUILayout.Button("+", GUILayout.Width(20)) ) {
+            if (GUILayout.Button("+", GUILayout.Width(20)))
+            {
                 newCount++;
             }
 
             GUILayout.EndHorizontal();
 
-            while ( newCount < _objectsToInsertRemove.Count ) {
-                _objectsToInsertRemove.RemoveAt(_objectsToInsertRemove.Count - 1);
+            while (newCount < objectsToInsertRemove.Count)
+            {
+                objectsToInsertRemove.RemoveAt(objectsToInsertRemove.Count - 1);
             }
 
-            while ( newCount > _objectsToInsertRemove.Count ) {
+            while (newCount > objectsToInsertRemove.Count)
+            {
                 var objectToAdd = default(T);
-                var count = _objectsToInsertRemove.Count;
+                var count = objectsToInsertRemove.Count;
 
-                if ( count > 0 ) {
-                    objectToAdd = _objectsToInsertRemove[count - 1];
+                if (count > 0)
+                {
+                    objectToAdd = objectsToInsertRemove[count - 1];
                 }
 
-                _objectsToInsertRemove.Add(objectToAdd);
+                objectsToInsertRemove.Add(objectToAdd);
             }
 
-            for ( var i = 0; i < _objectsToInsertRemove.Count; i++ ) {
-                _objectsToInsertRemove[i] = EditorGUILayout.ObjectField(
+            for (var i = 0; i < objectsToInsertRemove.Count; i++)
+            {
+                objectsToInsertRemove[i] = EditorGUILayout.ObjectField(
                     $"Element {i}:",
-                    _objectsToInsertRemove[i],
+                    objectsToInsertRemove[i],
                     typeof(T),
                     true) as T;
             }
-			
-			
-
         }
-		
-		
     }
 }
