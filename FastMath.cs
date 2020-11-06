@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UsefulTools.Performance {
+namespace UsefulTools {
 	public static class FastMath {
 		public static float Remap(float inValue, float inMin, float inMax, float outMin, float outMax) {
 			return outMin + (outMax - outMin) * ((inValue - inMin) / (inMax - inMin));
