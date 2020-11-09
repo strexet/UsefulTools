@@ -7,9 +7,17 @@ namespace UsefulTools.Editor
 {
     public class EditorScreenshot : EditorWindow
     {
+        const string NextScreenshotIndexPrefsKey = "EditorScreenshot.nextScreenshotIndex";
+        const string ScreenshotFolderPathPrefsKey = "EditorScreenshot.screenshotFolderPath";
+        const string ScreenshotFilenamePrefixPrefsKey = "EditorScreenshot.screenshotFilenamePrefix";
+
+        const string DefaultScreenshotFolderPath = "!Screenshots";
+        const string DefaultScreenshotFilenamePrefix = "screenshot_";
+        const int DefaultNextScreenshotIndex = 0;
+
         int nextScreenshotIndex;
-        string screenshotFilenamePrefix = "screenshot_";
-        string screenshotFolderPath = "Screenshots";
+        string screenshotFilenamePrefix;
+        string screenshotFolderPath;
 
         [MenuItem("Tools/UsefulTools/Editor Screenshot/Editor Screenshot Window")]
         static void Init()
@@ -25,23 +33,16 @@ namespace UsefulTools.Editor
 
         static EditorScreenshot GetOrCreateWindow()
         {
-            var editorScreenshot = GetWindow<EditorScreenshot>("!Screenshot");
+            var editorScreenshot = GetWindow<EditorScreenshot>("Screenshot");
 
-            if (EditorPrefs.HasKey("EditorScreenshot.screenshotFolderPath"))
-            {
-                editorScreenshot.screenshotFolderPath = EditorPrefs.GetString("EditorScreenshot.screenshotFolderPath");
-            }
+            editorScreenshot.screenshotFolderPath =
+                EditorPrefs.GetString(ScreenshotFolderPathPrefsKey, DefaultScreenshotFolderPath);
 
-            if (EditorPrefs.HasKey("EditorScreenshot.screenshotFilenamePrefix"))
-            {
-                editorScreenshot.screenshotFilenamePrefix =
-                    EditorPrefs.GetString("EditorScreenshot.screenshotFilenamePrefix");
-            }
+            editorScreenshot.screenshotFilenamePrefix =
+                EditorPrefs.GetString(ScreenshotFilenamePrefixPrefsKey, DefaultScreenshotFilenamePrefix);
 
-            if (EditorPrefs.HasKey("EditorScreenshot.nextScreenshotIndex"))
-            {
-                editorScreenshot.nextScreenshotIndex = EditorPrefs.GetInt("EditorScreenshot.nextScreenshotIndex");
-            }
+            editorScreenshot.nextScreenshotIndex =
+                EditorPrefs.GetInt(NextScreenshotIndexPrefsKey, DefaultNextScreenshotIndex);
 
             return editorScreenshot;
         }
@@ -58,9 +59,9 @@ namespace UsefulTools.Editor
 
             if (EditorGUI.EndChangeCheck())
             {
-                EditorPrefs.SetString("EditorScreenshot.screenshotFolderPath", screenshotFolderPath);
-                EditorPrefs.SetString("EditorScreenshot.screenshotFilenamePrefix", screenshotFilenamePrefix);
-                EditorPrefs.SetInt("EditorScreenshot.nextScreenshotIndex", nextScreenshotIndex);
+                EditorPrefs.SetString(ScreenshotFolderPathPrefsKey, screenshotFolderPath);
+                EditorPrefs.SetString(ScreenshotFilenamePrefixPrefsKey, screenshotFilenamePrefix);
+                EditorPrefs.SetInt(NextScreenshotIndexPrefsKey, nextScreenshotIndex);
             }
 
             if (GUILayout.Button("Take screenshot"))
@@ -79,7 +80,7 @@ namespace UsefulTools.Editor
             Debug.LogFormat("Screenshot recorded at {0} ({1})", filePath, UnityStats.screenRes);
 
             ++nextScreenshotIndex;
-            EditorPrefs.SetInt("EditorScreenshot.nextScreenshotIndex", nextScreenshotIndex);
+            EditorPrefs.SetInt(NextScreenshotIndexPrefsKey, nextScreenshotIndex);
         }
 
         string GetPath()
