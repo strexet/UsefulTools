@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ME.ECSEditor;
 using UnityEditor;
 using UnityEngine;
 
@@ -33,6 +34,7 @@ namespace UsefulTools.Editor.Tools
         bool selectInserted = true;
         readonly float smallSpacePixelsCount = 5f;
         string suffix = "";
+        int entityId = 0;
 
         [MenuItem("Tools/UsefulTools/Tools Window", false, 0)]
         static void Init()
@@ -50,6 +52,7 @@ namespace UsefulTools.Editor.Tools
             GUILayout.BeginVertical();
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
+            DrawSelectEntityWithId();
             DrawInsertRemoveObjectsMenu();
             DrawSelectChildrenParenMenu();
             DrawRenameSelectedObjectsMenu();
@@ -59,6 +62,32 @@ namespace UsefulTools.Editor.Tools
 
             GUILayout.EndScrollView();
             GUILayout.EndVertical();
+        }
+
+        void DrawSelectEntityWithId()
+        {
+            GUILayout.Label("Select Entity With Id", headerTextStyle);
+            entityId = EditorGUILayout.IntField("Entity ID", entityId);
+
+            if (GUILayout.Button("Select Entity"))
+            {
+                SelectEntityWithId(entityId);
+            }
+
+            GUILayout.Space(bigSpacePixelsCount);
+        }
+
+        private static void SelectEntityWithId(int id)
+        {
+            var world = ME.ECS.Worlds.currentWorld;
+            var currentEntity = world.GetEntityById(id);
+
+            if (currentEntity.IsEmpty())
+                Debug.LogError($"{nameof(UsefulToolsWindow)}.{nameof(DrawSelectEntityWithId)}> Entity with id{id} is empty!");
+            else if (!currentEntity.IsAlive())
+                Debug.LogError($"{nameof(UsefulToolsWindow)}.{nameof(DrawSelectEntityWithId)}> Entity with id{id} is not alive!");
+            else
+                WorldsViewerEditor.SelectEntity(currentEntity);
         }
 
         void DrawSelectObjectsWithCommonMaterialMenu()
