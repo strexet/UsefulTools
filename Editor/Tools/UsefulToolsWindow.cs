@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -33,6 +34,7 @@ namespace UsefulTools.Editor.Tools
         bool selectInserted = true;
         readonly float smallSpacePixelsCount = 5f;
         string suffix = "";
+        int logLineLength = 120;
 
         [MenuItem("Tools/UsefulTools/Tools Window", false, 0)]
         static void Init()
@@ -50,6 +52,7 @@ namespace UsefulTools.Editor.Tools
             GUILayout.BeginVertical();
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
+            DrawLogLine();
             DrawInsertRemoveObjectsMenu();
             DrawSelectChildrenParenMenu();
             DrawRenameSelectedObjectsMenu();
@@ -59,6 +62,23 @@ namespace UsefulTools.Editor.Tools
 
             GUILayout.EndScrollView();
             GUILayout.EndVertical();
+        }
+        
+        void DrawLogLine()
+        {
+            GUILayout.Label("Log Line", headerTextStyle);
+            logLineLength = EditorGUILayout.IntField("Line Length", logLineLength);
+
+            if (GUILayout.Button("Log Line"))
+            {
+                var line = new StringBuilder();
+                for (int i = 0; i < logLineLength; i++)
+                    line.Append("-");
+
+                Debug.Log(line);
+            }
+
+            GUILayout.Space(bigSpacePixelsCount);
         }
 
         void DrawSelectObjectsWithCommonMaterialMenu()
