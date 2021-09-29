@@ -10,7 +10,7 @@ namespace UsefulTools.Editor.Tools
 {
     public class UsefulToolsWindow : EditorWindow
     {
-        static readonly string[] Options = {"Prefix", "Suffix"};
+        static readonly string[] Options = { "Prefix", "Suffix" };
         string additionToName;
         readonly float bigSpacePixelsCount = 20f;
         string byComponentName = "";
@@ -36,6 +36,7 @@ namespace UsefulTools.Editor.Tools
         readonly float smallSpacePixelsCount = 5f;
         string suffix = "";
         int logLineLength = 120;
+        string hierarchyPath = "";
         int entityId = 0;
 
         [MenuItem("Tools/UsefulTools/Tools Window", false, 0)]
@@ -58,6 +59,7 @@ namespace UsefulTools.Editor.Tools
             DrawSelectEntityWithId();
             DrawInsertRemoveObjectsMenu();
             DrawSelectChildrenParenMenu();
+            DrawGetHierarchyPathOfSelectedObject();
             DrawRenameSelectedObjectsMenu();
             DrawSelectGameObjectsMenu();
             DrawPackObjectsMenu();
@@ -66,7 +68,7 @@ namespace UsefulTools.Editor.Tools
             GUILayout.EndScrollView();
             GUILayout.EndVertical();
         }
-        
+
         void DrawLogLine()
         {
             GUILayout.Label("Log Line", headerTextStyle);
@@ -127,6 +129,18 @@ namespace UsefulTools.Editor.Tools
             GUILayout.Space(bigSpacePixelsCount);
         }
 
+        void DrawGetHierarchyPathOfSelectedObject()
+        {
+            GUILayout.Label("Get Hierarchy Path Of Selected Object", headerTextStyle);
+
+            EditorGUILayout.TextField("Hierarchy Path", hierarchyPath);
+
+            if (GUILayout.Button("Get Path"))
+                hierarchyPath = GetHierarchyPathOfSelectedObject();
+
+            GUILayout.Space(bigSpacePixelsCount);
+        }
+
         void DrawSelectChildrenParenMenu()
         {
             GUILayout.Label("Select relatives of current selected objects", headerTextStyle);
@@ -163,6 +177,7 @@ namespace UsefulTools.Editor.Tools
             GUILayout.Label("Add to name...");
             selectedAddition =
                 GUILayout.SelectionGrid(selectedAddition, Options, Options.Length, EditorStyles.radioButton);
+
             GUILayout.EndHorizontal();
             additionToName = EditorGUILayout.TextField(additionToName);
 
@@ -322,10 +337,12 @@ namespace UsefulTools.Editor.Tools
                     prefix = additionToName;
                     suffix = string.Empty;
                     break;
+
                 case 1:
                     suffix = additionToName;
                     prefix = string.Empty;
                     break;
+
                 default:
                     return;
             }
@@ -380,8 +397,46 @@ namespace UsefulTools.Editor.Tools
             Selection.objects = properObjects.ToArray();
         }
 
-        void
-            SelectChildrenOrParentsOfSelectedObjects(bool selectChildrenNotParents, bool saveCurrentSelection)
+        string GetHierarchyPathOfSelectedObject()
+        {
+            var selected = Selection.gameObjects;
+
+            if (selected.Length != 1)
+                return "Select one object to get its hierarchy path!";
+
+            var reversedResultList = new List<string>();
+
+            foreach (var selectedObject in selected)
+            {
+                var current = selectedObject.transform;
+
+                while (current.parent != null)
+                {
+                    reversedResultList.Add(current.name);
+                    current = current.parent;
+                }
+            }
+
+            if (reversedResultList.Count == 0)
+                return string.Empty;
+
+            if (reversedResultList.Count == 1)
+                return reversedResultList[0];
+
+            var result = new StringBuilder();
+
+            for (int i = reversedResultList.Count - 1; i > 0; i--)
+            {
+                result.Append(reversedResultList[i])
+                      .Append("/");
+            }
+
+            result.Append(reversedResultList[0]);
+
+            return result.ToString();
+        }
+
+        void SelectChildrenOrParentsOfSelectedObjects(bool selectChildrenNotParents, bool saveCurrentSelection)
         {
             var selected = Selection.gameObjects;
 
@@ -521,7 +576,7 @@ namespace UsefulTools.Editor.Tools
                     "Set folding object's parent to the Folder");
             }
 
-            Selection.objects = new[] {n};
+            Selection.objects = new[] { n };
         }
 
         void InsertObjectsIntoSelected(GameObject[] clonedObjects, int numberOfActions,
