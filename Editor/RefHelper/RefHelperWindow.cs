@@ -86,11 +86,13 @@ namespace UsefulTools.Editor.RefHelper
             foreach (var selectedObject in LastSelectedObjects)
             {
                 GUILayout.BeginHorizontal();
+                EditorGUI.BeginDisabledGroup(true);
                 EditorGUILayout.ObjectField(
                     string.Empty,
                     selectedObject,
                     typeof(Object),
                     true);
+                EditorGUI.EndDisabledGroup();
 
                 if (GUILayout.Button("+", GUILayout.Width(20)))
                     ReferencedObjects.Add(selectedObject);
@@ -107,14 +109,17 @@ namespace UsefulTools.Editor.RefHelper
             DrawNextSaveRef();
             GUILayout.EndHorizontal();
 
+            
             for (int i = 0; i < ReferencedObjects.Count; i++)
             {
                 GUILayout.BeginHorizontal();
+                EditorGUI.BeginDisabledGroup(true);
                 ReferencedObjects[i] = EditorGUILayout.ObjectField(
                     string.Empty,
                     ReferencedObjects[i],
                     typeof(Object),
                     true);
+                EditorGUI.EndDisabledGroup();
 
                 if (GUILayout.Button("-", GUILayout.Width(20)))
                 {
@@ -131,7 +136,9 @@ namespace UsefulTools.Editor.RefHelper
             GUILayout.BeginHorizontal();
             
             GUILayout.FlexibleSpace();
-            GUILayout.Label("Drop To Save -->");
+            GUILayout.Label("Drop Here To Save");
+            
+            
             _nextRef = EditorGUILayout.ObjectField(
                 _nextRef,
                 typeof(Object),
