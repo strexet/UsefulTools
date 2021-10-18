@@ -27,7 +27,7 @@ namespace UsefulTools.Editor.Tools
 
         public void AddEmpty()
         {
-            list.Add(default(T));
+            list.Add(default);
         }
 
         public void UpdateAndDraw(ref List<T> objectsToInsertRemove)
