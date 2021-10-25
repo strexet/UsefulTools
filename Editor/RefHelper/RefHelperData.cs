@@ -30,7 +30,7 @@ namespace UsefulTools.Editor.RefHelper
 
             LastSelectedObjects = new List<Object>(saveData.LastSelectedPaths.Length);
             var lastSelectedObjects = saveData.LastSelectedPaths.Select(AssetDatabase.LoadAssetAtPath<Object>);
-            ReferencedObjects.AddRange(lastSelectedObjects);
+            LastSelectedObjects.AddRange(lastSelectedObjects);
         }
 
         private void SetupEmpty()
