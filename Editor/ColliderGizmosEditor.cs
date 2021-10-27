@@ -1,11 +1,10 @@
 using UnityEditor;
 using UnityEngine;
-using UsefulTools.ColliderGizmos;
 
 namespace UsefulTools.Editor
 {
-    [CustomEditor(typeof(ColliderGizmo)), CanEditMultipleObjects]
-    public class ColliderGizmoEditor : UnityEditor.Editor
+    [CustomEditor(typeof(ColliderGizmos.ColliderGizmos)), CanEditMultipleObjects]
+    public class ColliderGizmosEditor : UnityEditor.Editor
     {
         private SerializedProperty _enabledProperty;
         private SerializedProperty _alphaProperty;
@@ -19,13 +18,13 @@ namespace UsefulTools.Editor
 
         private SerializedProperty _includeChilds;
 
-        private ColliderGizmo _target;
+        private ColliderGizmos.ColliderGizmos _target;
 
         private int _collidersCount;
 
         private void OnEnable()
         {
-            _target = target as ColliderGizmo;
+            _target = target as ColliderGizmos.ColliderGizmos;
 
             _enabledProperty = serializedObject.FindProperty("m_Enabled");
             _alphaProperty = serializedObject.FindProperty("Alpha");
@@ -53,12 +52,12 @@ namespace UsefulTools.Editor
             EditorGUILayout.PropertyField(_enabledProperty);
 
             EditorGUI.BeginChangeCheck();
-            _target.Preset = (ColliderGizmo.Presets) EditorGUILayout.EnumPopup("Color Preset", _target.Preset);
+            _target.Preset = (ColliderGizmos.ColliderGizmos.Presets) EditorGUILayout.EnumPopup("Color Preset", _target.Preset);
             if (EditorGUI.EndChangeCheck())
             {
                 foreach (var singleTarget in targets)
                 {
-                    var gizmo = (ColliderGizmo) singleTarget;
+                    var gizmo = (ColliderGizmos.ColliderGizmos) singleTarget;
                     gizmo.ChangePreset(_target.Preset);
                     EditorUtility.SetDirty(gizmo);
                 }
@@ -98,7 +97,7 @@ namespace UsefulTools.Editor
                 var customFillColor = serializedObject.FindProperty("CustomFillColor");
                 var customCenterColor = serializedObject.FindProperty("CustomCenterColor");
 
-                presetProp.enumValueIndex = (int) ColliderGizmo.Presets.Custom;
+                presetProp.enumValueIndex = (int) ColliderGizmos.ColliderGizmos.Presets.Custom;
                 customWireColor.colorValue = _wireColorProperty.colorValue;
                 customFillColor.colorValue = _fillColorProperty.colorValue;
                 customCenterColor.colorValue = _centerColorProperty.colorValue;

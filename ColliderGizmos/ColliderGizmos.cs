@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UsefulTools.ColliderGizmos
 {
-	public class ColliderGizmo : MonoBehaviour
+	public class ColliderGizmos : MonoBehaviour
 	{
 #if UNITY_EDITOR
 		public Presets Preset;
@@ -15,9 +15,9 @@ namespace UsefulTools.ColliderGizmos
 		public Color CustomCenterColor;
 
 		public float Alpha = 1.0f;
-		public Color WireColor = new Color(.6f, .6f, 1f, .5f);
-		public Color FillColor = new Color(.6f, .7f, 1f, .1f);
-		public Color CenterColor = new Color(.6f, .7f, 1f, .7f);
+		public Color WireColor = new Color(1f, 1f, 1f, 0.1f);
+		public Color FillColor = new Color(0.4f, 0.4f, 0.8f, 0.2f);
+		public Color CenterColor = new Color(1f, 1f, 1f, 0.1f);
 
 		public bool DrawFill = true;
 		public bool DrawWire = true;
@@ -26,7 +26,7 @@ namespace UsefulTools.ColliderGizmos
 		/// <summary>
 		/// The radius of the center marker on your collider(s)
 		/// </summary>
-		public float CenterMarkerRadius = 1.0f;
+		public float CenterMarkerRadius = 0.025f;
 
 		public bool IncludeChildColliders;
 
