@@ -71,16 +71,16 @@ namespace UsefulTools.Editor.RefHelper
 
         private void ClearEmptyRefs()
         {
-            for (int i = ReferencedObjects.Count - 1; i >= 0; i--)
+            for (int i = LastSelectedObjects.Count - 1; i >= 0; i--)
             {
                 if (LastSelectedObjects[i] == null)
                     LastSelectedObjects.RemoveAt(i);
             }
 
-            for (int i = ReferencedObjects.Count - 1; i >= 0; i--)
+            for (int j = ReferencedObjects.Count - 1; j >= 0; j--)
             {
-                if (ReferencedObjects[i] == null)
-                    ReferencedObjects.RemoveAt(i);
+                if (ReferencedObjects[j] == null)
+                    ReferencedObjects.RemoveAt(j);
             }
         }
 
