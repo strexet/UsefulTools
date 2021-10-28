@@ -73,7 +73,7 @@ namespace UsefulTools.Editor.RefHelper
         {
             for (int i = ReferencedObjects.Count - 1; i >= 0; i--)
             {
-                if (ReferencedObjects[i] == null)
+                if (LastSelectedObjects[i] == null)
                     LastSelectedObjects.RemoveAt(i);
             }
 
