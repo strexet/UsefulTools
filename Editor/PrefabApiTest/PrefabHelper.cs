@@ -1,5 +1,5 @@
 using UnityEditor;
-using UnityEditor.Experimental.SceneManagement;
+
 using UnityEngine;
 
 namespace UsefulTools.Editor.PrefabApiTest
@@ -179,7 +179,7 @@ namespace UsefulTools.Editor.PrefabApiTest
 
             // Third test is testing everything about Prefab stage property
             // needed to be checked separately as it is very special rule
-            var editorPrefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            var editorPrefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
             if (editorPrefabStage != null)
             {
                 // We are in prefab stage, but is selected gameobject really an object from prefab stage?
@@ -229,13 +229,13 @@ namespace UsefulTools.Editor.PrefabApiTest
             return p;
         }
 
-        public static bool IsPartOfPrefabStage(GameObject gameObject, out PrefabStage pfs)
+        public static bool IsPartOfPrefabStage(GameObject gameObject, out UnityEditor.SceneManagement.PrefabStage pfs)
         {
-            pfs = PrefabStageUtility.GetPrefabStage(gameObject);
+            pfs = UnityEditor.SceneManagement.PrefabStageUtility.GetPrefabStage(gameObject);
             return pfs != null;
         }
 
-        public static bool IsRootOfPrefabStage(GameObject gameObject, out PrefabStage pfs)
+        public static bool IsRootOfPrefabStage(GameObject gameObject, out UnityEditor.SceneManagement.PrefabStage pfs)
         {
             // Note: Cannot use pfs.IsPartOfPrefabContents or pfs.prefabContentsRoot
             // InvalidOperationException: Requesting 'prefabContentsRoot' from Awake and OnEnable are not supported
