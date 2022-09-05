@@ -21,6 +21,7 @@ namespace UsefulTools.Editor.RefHelper
             if (saveData == null || saveData.ReferencedPaths == null || saveData.LastSelectedPaths == null)
             {
                 SetupEmpty();
+
                 return;
             }
 

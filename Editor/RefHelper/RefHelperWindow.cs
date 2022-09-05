@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 namespace UsefulTools.Editor.RefHelper
 {
     public class RefHelperWindow : EditorWindow
-    { 
+    {
         private RefHelperData _refHelperData;
         private IRefHelperSaveLoad _saveLoad;
         private Object _nextRef;
@@ -17,7 +17,7 @@ namespace UsefulTools.Editor.RefHelper
         private Vector2 _scrollPosition;
 
         private RefHelperData RefHelperData => _refHelperData ??= new RefHelperData();
-        private IRefHelperSaveLoad SaveLoad => _saveLoad ??= new RefHelperSaveLoadRaw();
+        private IRefHelperSaveLoad SaveLoad => _saveLoad ??= new RefHelperSaveLoadScriptable();
         private List<Object> ReferencedObjects => RefHelperData.ReferencedObjects ??= new List<Object>();
         private List<Object> LastSelectedObjects => RefHelperData.LastSelectedObjects ??= new List<Object>();
 
@@ -76,13 +76,17 @@ namespace UsefulTools.Editor.RefHelper
             for (int i = LastSelectedObjects.Count - 1; i >= 0; i--)
             {
                 if (LastSelectedObjects[i] == null)
+                {
                     LastSelectedObjects.RemoveAt(i);
+                }
             }
 
             for (int j = ReferencedObjects.Count - 1; j >= 0; j--)
             {
                 if (ReferencedObjects[j] == null)
+                {
                     ReferencedObjects.RemoveAt(j);
+                }
             }
         }
 
@@ -91,9 +95,11 @@ namespace UsefulTools.Editor.RefHelper
             GUILayout.BeginVertical();
             GUILayout.Label("History", _headerTextStyle);
 
-            RefHelperData.LastSelectedObjectsMaxCount = EditorGUILayout.DelayedIntField("Max Count", RefHelperData.LastSelectedObjectsMaxCount);
+            RefHelperData.LastSelectedObjectsMaxCount =
+                EditorGUILayout.DelayedIntField("Max Count", RefHelperData.LastSelectedObjectsMaxCount);
+
             int maxIndex = LastSelectedObjects.Count - 1;
-            
+
             for (int i = maxIndex; i >= 0; i--)
             {
                 var selectedObject = LastSelectedObjects[i];
@@ -106,18 +112,21 @@ namespace UsefulTools.Editor.RefHelper
         private static void DrawObjectToHistory(Object selectedObject, Action buttonCallback)
         {
             GUILayout.BeginHorizontal();
-            
+
             if (GUILayout.Button("+", GUILayout.Width(20)))
+            {
                 buttonCallback?.Invoke();
-            
+            }
+
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.ObjectField(
                 string.Empty,
                 selectedObject,
                 typeof(Object),
                 true);
+
             EditorGUI.EndDisabledGroup();
-            
+
             GUILayout.EndHorizontal();
         }
 
@@ -133,7 +142,7 @@ namespace UsefulTools.Editor.RefHelper
             {
                 var referencedObject = ReferencedObjects[i];
                 int removeAtIndex = i;
-                
+
                 if (!DrawSavedObject(referencedObject, () => ReferencedObjects.RemoveAt(removeAtIndex)))
                 {
                     return;
@@ -144,7 +153,7 @@ namespace UsefulTools.Editor.RefHelper
         private static bool DrawSavedObject(Object savedObject, Action buttonCallback)
         {
             GUILayout.BeginHorizontal();
-            
+
             if (GUILayout.Button("-", GUILayout.Width(20)))
             {
                 buttonCallback?.Invoke();
@@ -160,7 +169,7 @@ namespace UsefulTools.Editor.RefHelper
                 true);
 
             EditorGUI.EndDisabledGroup();
-            
+
             GUILayout.EndHorizontal();
 
             return true;
@@ -194,7 +203,9 @@ namespace UsefulTools.Editor.RefHelper
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button("Clear Saved"))
+            {
                 ReferencedObjects.Clear();
+            }
 
             GUILayout.EndHorizontal();
         }
@@ -208,7 +219,9 @@ namespace UsefulTools.Editor.RefHelper
         private void SubscribeToSelectionChange()
         {
             if (_isSubscribed)
+            {
                 return;
+            }
 
             _isSubscribed = true;
             Selection.selectionChanged += UpdateLastSelectedObjects;
@@ -217,7 +230,9 @@ namespace UsefulTools.Editor.RefHelper
         private void UnsubscribeFromSelectionChange()
         {
             if (!_isSubscribed)
+            {
                 return;
+            }
 
             _isSubscribed = false;
             Selection.selectionChanged -= UpdateLastSelectedObjects;
@@ -226,7 +241,9 @@ namespace UsefulTools.Editor.RefHelper
         private void UpdateLastSelectedObjects()
         {
             if (Selection.count != 1)
+            {
                 return;
+            }
 
             LastSelectedObjects.Add(Selection.objects[0]);
 
