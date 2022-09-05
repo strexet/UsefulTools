@@ -1,10 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace UsefulTools.Editor.RefHelper
 {
+    [Serializable]
     public class RefHelperData
     {
         public int LastSelectedObjectsMaxCount;
