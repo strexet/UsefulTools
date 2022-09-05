@@ -1,14 +1,15 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace UsefulTools.Editor.RefHelper
 {
     public class RefHelperWindow : EditorWindow
-    {
-        private const string RefHelperSaveKey = "UsefulTools.RefHelper.Data";
-
+    { 
         private RefHelperData _refHelperData;
+        private IRefHelperSaveLoad _saveLoad;
         private Object _nextRef;
         private bool _isSubscribed;
 
@@ -16,6 +17,7 @@ namespace UsefulTools.Editor.RefHelper
         private Vector2 _scrollPosition;
 
         private RefHelperData RefHelperData => _refHelperData ??= new RefHelperData();
+        private IRefHelperSaveLoad SaveLoad => _saveLoad ??= new RefHelperSaveLoadRaw();
         private List<Object> ReferencedObjects => RefHelperData.ReferencedObjects ??= new List<Object>();
         private List<Object> LastSelectedObjects => RefHelperData.LastSelectedObjects ??= new List<Object>();
 
@@ -30,13 +32,13 @@ namespace UsefulTools.Editor.RefHelper
         private void OnEnable()
         {
             SubscribeToSelectionChange();
-            LoadData();
+            _refHelperData = SaveLoad.LoadData();
         }
 
         private void OnDestroy()
         {
             UnsubscribeFromSelectionChange();
-            SaveData();
+            SaveLoad.SaveData(_refHelperData);
         }
 
         private void OnGUI()
@@ -44,7 +46,7 @@ namespace UsefulTools.Editor.RefHelper
             InitHeaderStyle();
             Resubscribe();
             UpdateGUI();
-            SaveData();
+            SaveLoad.SaveData(_refHelperData);
         }
 
         private void UpdateGUI()
@@ -90,66 +92,86 @@ namespace UsefulTools.Editor.RefHelper
             GUILayout.Label("History", _headerTextStyle);
 
             RefHelperData.LastSelectedObjectsMaxCount = EditorGUILayout.DelayedIntField("Max Count", RefHelperData.LastSelectedObjectsMaxCount);
-
-            for (int i = LastSelectedObjects.Count - 1; i >= 0; i--)
+            int maxIndex = LastSelectedObjects.Count - 1;
+            
+            for (int i = maxIndex; i >= 0; i--)
             {
                 var selectedObject = LastSelectedObjects[i];
-
-                GUILayout.BeginHorizontal();
-                EditorGUI.BeginDisabledGroup(true);
-                EditorGUILayout.ObjectField(
-                    string.Empty,
-                    selectedObject,
-                    typeof(Object),
-                    true);
-
-                EditorGUI.EndDisabledGroup();
-
-                if (GUILayout.Button("+", GUILayout.Width(20)))
-                    ReferencedObjects.Add(selectedObject);
-
-                GUILayout.EndHorizontal();
+                DrawObjectToHistory(selectedObject, () => ReferencedObjects.Add(selectedObject));
             }
 
             GUILayout.EndVertical();
         }
 
-        private void DrawSavedRefs()
+        private static void DrawObjectToHistory(Object selectedObject, Action buttonCallback)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Saved", _headerTextStyle);
-            GUILayout.Space(25);
-            DrawNextSaveRef();
+            
+            if (GUILayout.Button("+", GUILayout.Width(20)))
+                buttonCallback?.Invoke();
+            
+            EditorGUI.BeginDisabledGroup(true);
+            EditorGUILayout.ObjectField(
+                string.Empty,
+                selectedObject,
+                typeof(Object),
+                true);
+            EditorGUI.EndDisabledGroup();
+            
             GUILayout.EndHorizontal();
+        }
+
+        private void DrawSavedRefs()
+        {
+            // GUILayout.BeginHorizontal();
+            GUILayout.Label("Saved", _headerTextStyle);
+            // GUILayout.Space(25);
+            DrawNextSaveRef();
+            // GUILayout.EndHorizontal();
 
             for (int i = 0; i < ReferencedObjects.Count; i++)
             {
-                GUILayout.BeginHorizontal();
-                EditorGUI.BeginDisabledGroup(true);
-                ReferencedObjects[i] = EditorGUILayout.ObjectField(
-                    string.Empty,
-                    ReferencedObjects[i],
-                    typeof(Object),
-                    true);
-
-                EditorGUI.EndDisabledGroup();
-
-                if (GUILayout.Button("-", GUILayout.Width(20)))
+                var referencedObject = ReferencedObjects[i];
+                int removeAtIndex = i;
+                
+                if (!DrawSavedObject(referencedObject, () => ReferencedObjects.RemoveAt(removeAtIndex)))
                 {
-                    ReferencedObjects.RemoveAt(i);
                     return;
                 }
-
-                GUILayout.EndHorizontal();
             }
+        }
+
+        private static bool DrawSavedObject(Object savedObject, Action buttonCallback)
+        {
+            GUILayout.BeginHorizontal();
+            
+            if (GUILayout.Button("-", GUILayout.Width(20)))
+            {
+                buttonCallback?.Invoke();
+
+                return false;
+            }
+
+            EditorGUI.BeginDisabledGroup(true);
+            EditorGUILayout.ObjectField(
+                string.Empty,
+                savedObject,
+                typeof(Object),
+                true);
+
+            EditorGUI.EndDisabledGroup();
+            
+            GUILayout.EndHorizontal();
+
+            return true;
         }
 
         private void DrawNextSaveRef()
         {
             GUILayout.BeginHorizontal();
 
-            GUILayout.FlexibleSpace();
-            GUILayout.Label("Drop Here To Save");
+            // GUILayout.FlexibleSpace();
+            GUILayout.Label("Drop To Save");
 
             _nextRef = EditorGUILayout.ObjectField(
                 _nextRef,
@@ -222,19 +244,5 @@ namespace UsefulTools.Editor.RefHelper
                 fontStyle = FontStyle.Bold,
                 padding = new RectOffset(3, 0, 0, 1)
             };
-
-        private void SaveData()
-        {
-            var saveData = new RefHelperSaveData(_refHelperData);
-            string dataString = JsonUtility.ToJson(saveData);
-            PlayerPrefs.SetString(RefHelperSaveKey, dataString);
-        }
-
-        private void LoadData()
-        {
-            string dataString = PlayerPrefs.GetString(RefHelperSaveKey);
-            var saveData = JsonUtility.FromJson<RefHelperSaveData>(dataString);
-            _refHelperData = new RefHelperData(saveData);
-        }
     }
 }
