@@ -1,15 +1,17 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace UsefulTools.Editor.RefHelper
 {
+    [Serializable]
     public class RefHelperData
     {
         public int LastSelectedObjectsMaxCount;
         public List<Object> ReferencedObjects;
-        public Queue<Object> LastSelectedObjects;
+        public List<Object> LastSelectedObjects;
 
         public RefHelperData() =>
             SetupEmpty();
@@ -19,6 +21,7 @@ namespace UsefulTools.Editor.RefHelper
             if (saveData == null || saveData.ReferencedPaths == null || saveData.LastSelectedPaths == null)
             {
                 SetupEmpty();
+
                 return;
             }
 
@@ -28,17 +31,16 @@ namespace UsefulTools.Editor.RefHelper
             var referencedObjects = saveData.ReferencedPaths.Select(AssetDatabase.LoadAssetAtPath<Object>);
             ReferencedObjects.AddRange(referencedObjects);
 
-            LastSelectedObjects = new Queue<Object>(saveData.LastSelectedPaths.Length);
+            LastSelectedObjects = new List<Object>(saveData.LastSelectedPaths.Length);
             var lastSelectedObjects = saveData.LastSelectedPaths.Select(AssetDatabase.LoadAssetAtPath<Object>);
-            foreach (var selectedObject in lastSelectedObjects)
-                LastSelectedObjects.Enqueue(selectedObject);
+            LastSelectedObjects.AddRange(lastSelectedObjects);
         }
 
         private void SetupEmpty()
         {
             LastSelectedObjectsMaxCount = 4;
             ReferencedObjects = new List<Object>();
-            LastSelectedObjects = new Queue<Object>();
+            LastSelectedObjects = new List<Object>();
         }
     }
 }
