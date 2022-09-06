@@ -6,9 +6,9 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-#if UNITY_2019_1_OR_NEWER
-using UnityEngine.UIElements;
 
+#if UNITY_2020_1_OR_NEWER
+using UnityEngine.UIElements;
 #else
 using UnityEngine.Experimental.UIElements;
 #endif
@@ -88,9 +88,6 @@ namespace UsefulTools.Editor
 
                 _scenePaths = scenePaths.ToArray();
                 _sceneNames = sceneNames.ToArray();
-
-                Debug.Log($"[DEBUG]<color=green>{nameof(SceneShortcutUtil)}.{nameof(Update)}></color> " +
-                          $"Got scene paths and names: {_sceneNames.Length} names and {_scenePaths.Length} paths");
             }
         }
 
