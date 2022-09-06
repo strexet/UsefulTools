@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UsefulTools
+namespace UsefulTools.Runtime
 {
     public static class FastMath
     {
