@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UsefulTools.Editor
 {
-    [CustomEditor(typeof(ColliderGizmos.ColliderGizmos)), CanEditMultipleObjects]
+    [CustomEditor(typeof(ColliderGizmos.ColliderGizmos))] [CanEditMultipleObjects]
     public class ColliderGizmosEditor : UnityEditor.Editor
     {
         private SerializedProperty _enabledProperty;
@@ -44,7 +44,6 @@ namespace UsefulTools.Editor
             _collidersCount = CollidersCount();
         }
 
-
         public override void OnInspectorGUI()
         {
             Undo.RecordObject(_target, "CG_State");
@@ -52,12 +51,12 @@ namespace UsefulTools.Editor
             EditorGUILayout.PropertyField(_enabledProperty);
 
             EditorGUI.BeginChangeCheck();
-            _target.Preset = (ColliderGizmos.ColliderGizmos.Presets) EditorGUILayout.EnumPopup("Color Preset", _target.Preset);
+            _target.Preset = (ColliderGizmos.ColliderGizmos.Presets)EditorGUILayout.EnumPopup("Color Preset", _target.Preset);
             if (EditorGUI.EndChangeCheck())
             {
                 foreach (var singleTarget in targets)
                 {
-                    var gizmo = (ColliderGizmos.ColliderGizmos) singleTarget;
+                    var gizmo = (ColliderGizmos.ColliderGizmos)singleTarget;
                     gizmo.ChangePreset(_target.Preset);
                     EditorUtility.SetDirty(gizmo);
                 }
@@ -65,18 +64,19 @@ namespace UsefulTools.Editor
 
             _alphaProperty.floatValue = EditorGUILayout.Slider("Overall Transparency", _alphaProperty.floatValue, 0, 1);
 
-
             EditorGUI.BeginChangeCheck();
             using (new EditorGUILayout.HorizontalScope())
             {
                 EditorGUILayout.PropertyField(_drawWireProperty);
-                if (_drawWireProperty.boolValue) EditorGUILayout.PropertyField(_wireColorProperty, new GUIContent(""));
+                if (_drawWireProperty.boolValue)
+                    EditorGUILayout.PropertyField(_wireColorProperty, new GUIContent(""));
             }
 
             using (new EditorGUILayout.HorizontalScope())
             {
                 EditorGUILayout.PropertyField(_drawFillProperty);
-                if (_drawFillProperty.boolValue) EditorGUILayout.PropertyField(_fillColorProperty, new GUIContent(""));
+                if (_drawFillProperty.boolValue)
+                    EditorGUILayout.PropertyField(_fillColorProperty, new GUIContent(""));
             }
 
             using (new EditorGUILayout.HorizontalScope())
@@ -89,7 +89,6 @@ namespace UsefulTools.Editor
                 }
             }
 
-
             if (EditorGUI.EndChangeCheck())
             {
                 var presetProp = serializedObject.FindProperty("Preset");
@@ -97,7 +96,7 @@ namespace UsefulTools.Editor
                 var customFillColor = serializedObject.FindProperty("CustomFillColor");
                 var customCenterColor = serializedObject.FindProperty("CustomCenterColor");
 
-                presetProp.enumValueIndex = (int) ColliderGizmos.ColliderGizmos.Presets.Custom;
+                presetProp.enumValueIndex = (int)ColliderGizmos.ColliderGizmos.Presets.Custom;
                 customWireColor.colorValue = _wireColorProperty.colorValue;
                 customFillColor.colorValue = _fillColorProperty.colorValue;
                 customCenterColor.colorValue = _centerColorProperty.colorValue;

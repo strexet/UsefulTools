@@ -6,21 +6,21 @@ namespace UsefulTools.Editor
 {
     public class DumpRenderTexture : EditorWindow
     {
-        Camera cameraWithRenderTexture;
-        string fileName = "DumpedRenderTexture";
-        int textureHeight = 800;
+        private Camera cameraWithRenderTexture;
+        private string fileName = "DumpedRenderTexture";
+        private int textureHeight = 800;
 
         [MenuItem("Tools/UsefulTools/Dump Render Texture To File")]
-        static void Init()
+        private static void Init()
         {
             // EditorWindow.GetWindow() will return the open instance of the specified window or create a new
             // instance if it can't find one. The second parameter is a flag for creating the window as a
             // Utility window; Utility windows cannot be docked like the Scene and Game view windows.
-            var window = (DumpRenderTexture) GetWindow(typeof(DumpRenderTexture), false, "DumpRenderTexture");
+            var window = (DumpRenderTexture)GetWindow(typeof(DumpRenderTexture), false, "DumpRenderTexture");
             window.position = new Rect(window.position.xMin + 100f, window.position.yMin + 100f, 300f, 50f);
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             EditorGUILayout.BeginVertical();
 
@@ -29,6 +29,7 @@ namespace UsefulTools.Editor
             GUILayout.Label("Render Texture: ", EditorStyles.boldLabel);
             cameraWithRenderTexture =
                 EditorGUILayout.ObjectField(cameraWithRenderTexture, typeof(Camera), true) as Camera;
+
             GUILayout.EndHorizontal();
 
             // Draw "Texture Height" field
@@ -52,7 +53,7 @@ namespace UsefulTools.Editor
             EditorGUILayout.EndVertical();
         }
 
-        void SaveCertificate(string path)
+        private void SaveCertificate(string path)
         {
             var targetTexture = cameraWithRenderTexture.targetTexture;
 
@@ -60,19 +61,19 @@ namespace UsefulTools.Editor
 
             var newTexture = CreateNewTexture(targetTexture);
             var croppedTex = CroppedTexture(newTexture);
-            var bytes = croppedTex.EncodeToPNG();
+            byte[] bytes = croppedTex.EncodeToPNG();
 
             File.WriteAllBytes(path, bytes);
         }
 
-        static Texture2D CreateNewTexture(Texture targetTexture)
+        private static Texture2D CreateNewTexture(Texture targetTexture)
         {
             var newTexture = new Texture2D(targetTexture.width,
                 targetTexture.height,
                 TextureFormat.ARGB32, false);
 
             newTexture
-                .ReadPixels(
+               .ReadPixels(
                     new Rect(0, 0, targetTexture.width,
                         targetTexture.height),
                     0, 0, false);
@@ -81,7 +82,7 @@ namespace UsefulTools.Editor
             return newTexture;
         }
 
-        Texture2D CroppedTexture(Texture2D newTexture)
+        private Texture2D CroppedTexture(Texture2D newTexture)
         {
             var colorArrayCropped =
                 newTexture.GetPixels(0, newTexture.height - textureHeight, newTexture.width,
@@ -96,11 +97,11 @@ namespace UsefulTools.Editor
             return croppedTex;
         }
 
-        Texture2D FillInClear(Texture2D tex2D, Color whatToFillWith)
+        private Texture2D FillInClear(Texture2D tex2D, Color whatToFillWith)
         {
-            for (var i = 0; i < tex2D.width; i++)
+            for (int i = 0; i < tex2D.width; i++)
             {
-                for (var j = 0; j < tex2D.height; j++)
+                for (int j = 0; j < tex2D.height; j++)
                 {
                     if (tex2D.GetPixel(i, j) == Color.clear)
                     {

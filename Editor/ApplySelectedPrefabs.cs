@@ -5,34 +5,25 @@ namespace UsefulTools.Editor
 {
     public static class ApplySelectedPrefabs
     {
-        const int SelectionThresholdForProgressBar = 20;
-        static bool showProgressBar;
-        static int changedObjectsCount;
+        private const int SelectionThresholdForProgressBar = 20;
+        private static bool showProgressBar;
+        private static int changedObjectsCount;
 
         [MenuItem("Tools/UsefulTools/Prefabs/Apply Changes To Selected Prefabs %j", false, 100)]
-        static void ApplyPrefabs()
-        {
-            SearchPrefabConnections(ApplyToSelectedPrefabs);
-        }
+        private static void ApplyPrefabs() => SearchPrefabConnections(ApplyToSelectedPrefabs);
 
         [MenuItem("Tools/UsefulTools/Prefabs/Revert Changes Of Selected Prefabs", false, 100)]
-        static void ResetPrefabs()
-        {
-            SearchPrefabConnections(RevertToSelectedPrefabs);
-        }
+        private static void ResetPrefabs() => SearchPrefabConnections(RevertToSelectedPrefabs);
 
         [MenuItem("Tools/UsefulTools/Prefabs/Apply Changes To Selected Prefabs", true)]
         [MenuItem("Tools/UsefulTools/Prefabs/Revert Changes Of Selected Prefabs", true)]
-        static bool IsSceneObjectSelected()
-        {
-            return Selection.activeTransform != null;
-        }
+        private static bool IsSceneObjectSelected() => Selection.activeTransform != null;
 
         //Look for connections
-        static void SearchPrefabConnections(ChangePrefab changePrefabAction)
+        private static void SearchPrefabConnections(ChangePrefab changePrefabAction)
         {
             var selectedTransforms = Selection.gameObjects;
-            var numberOfTransforms = selectedTransforms.Length;
+            int numberOfTransforms = selectedTransforms.Length;
 
             showProgressBar = numberOfTransforms >= SelectionThresholdForProgressBar;
             changedObjectsCount = 0;
@@ -40,14 +31,14 @@ namespace UsefulTools.Editor
             //Iterate through all the selected gameobjects
             try
             {
-                for (var i = 0; i < numberOfTransforms; i++)
+                for (int i = 0; i < numberOfTransforms; i++)
                 {
                     var go = selectedTransforms[i];
                     if (showProgressBar)
                     {
                         EditorUtility.DisplayProgressBar("Update prefabs",
                             "Updating prefab " + go.name + " (" + i + "/" + numberOfTransforms + ")",
-                            i / (float) numberOfTransforms);
+                            i / (float)numberOfTransforms);
                     }
 
                     IterateThroughObjectTree(changePrefabAction, go);
@@ -64,7 +55,7 @@ namespace UsefulTools.Editor
             }
         }
 
-        static void IterateThroughObjectTree(ChangePrefab changePrefabAction, GameObject go)
+        private static void IterateThroughObjectTree(ChangePrefab changePrefabAction, GameObject go)
         {
             var prefabType = PrefabUtility.GetPrefabAssetType(go);
 
@@ -85,8 +76,8 @@ namespace UsefulTools.Editor
 
             // If not a prefab, go through all children
             var transform = go.transform;
-            var children = transform.childCount;
-            for (var i = 0; i < children; i++)
+            int children = transform.childCount;
+            for (int i = 0; i < children; i++)
             {
                 var childGo = transform.GetChild(i).gameObject;
                 IterateThroughObjectTree(changePrefabAction, childGo);
@@ -94,9 +85,9 @@ namespace UsefulTools.Editor
         }
 
         //Apply    
-        static void ApplyToSelectedPrefabs(GameObject go)
+        private static void ApplyToSelectedPrefabs(GameObject go)
         {
-            var prefabAssetPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(go);
+            string prefabAssetPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(go);
 
             if (string.IsNullOrEmpty(prefabAssetPath))
             {
@@ -107,11 +98,8 @@ namespace UsefulTools.Editor
         }
 
         //Revert
-        static void RevertToSelectedPrefabs(GameObject go)
-        {
-            PrefabUtility.RevertPrefabInstance(go, InteractionMode.UserAction);
-        }
+        private static void RevertToSelectedPrefabs(GameObject go) => PrefabUtility.RevertPrefabInstance(go, InteractionMode.UserAction);
 
-        delegate void ChangePrefab(GameObject go);
+        private delegate void ChangePrefab(GameObject go);
     }
 }
