@@ -66,12 +66,37 @@ namespace UsefulTools.Editor.RefHelper
             string dataString = PlayerPrefs.GetString(RefHelperSaveKey);
             var saveData = JsonUtility.FromJson<RefHelperSaveData>(dataString);
 
-            return new RefHelperData(saveData);
+            return CreateRefHelperData(saveData);
+        }
+
+        private static RefHelperData CreateRefHelperData(RefHelperSaveData saveData)
+        {
+            var refHelperData = new RefHelperData();
+
+            if (saveData == null || saveData.ReferencedPaths == null || saveData.LastSelectedPaths == null)
+            {
+                return refHelperData;
+            }
+
+            refHelperData.LastSelectedObjectsMaxCount = saveData.LastSelectedObjectsMaxCount;
+
+            refHelperData.ReferencedObjects = new List<Object>(saveData.ReferencedPaths.Length);
+            var referencedObjects = saveData.ReferencedPaths.Select(AssetDatabase.LoadAssetAtPath<Object>);
+            refHelperData.ReferencedObjects.AddRange(referencedObjects);
+
+            refHelperData.LastSelectedObjects = new List<Object>(saveData.LastSelectedPaths.Length);
+            var lastSelectedObjects = saveData.LastSelectedPaths.Select(AssetDatabase.LoadAssetAtPath<Object>);
+            refHelperData.LastSelectedObjects.AddRange(lastSelectedObjects);
+
+            return refHelperData;
         }
     }
 
     public class RefHelperSaveLoadScriptable : IRefHelperSaveLoad
     {
+        private static RefHelperSaveLoadScriptable instance;
+        public static IRefHelperSaveLoad Instance => instance ??= new RefHelperSaveLoadScriptable();
+
         private const string RefHelperScriptableAssetsDirectoryPath = "UsefulTools/Editor/RefHelperData";
         private const string RefHelperScriptableFileName = "RefHelperScriptableData.asset";
         private const string RefHelperScriptablePath = "Assets/"
@@ -91,9 +116,20 @@ namespace UsefulTools.Editor.RefHelper
 
         private RefHelperScriptableData _scriptableData;
 
-        private RefHelperScriptableData ScriptableData => _scriptableData == null || !AssetFileExist
-            ? _scriptableData = LoadRefHelperScriptableData()
-            : _scriptableData;
+        private RefHelperScriptableData ScriptableData
+        {
+            get
+            {
+                if (_scriptableData == null || !AssetFileExist)
+                {
+                    _scriptableData = LoadRefHelperScriptableData();
+                }
+
+                return _scriptableData;
+            }
+        }
+
+        private RefHelperSaveLoadScriptable() { }
 
         public void SaveData(RefHelperData data) => ScriptableData.RefHelperData = data;
 
