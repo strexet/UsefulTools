@@ -7,9 +7,9 @@ namespace UsefulTools.Editor.Flat
     [CustomEditor(typeof(PastePrefabsAsChildren))]
     public class PastePrefabsAsChildrenEditor : UnityEditor.Editor
     {
-        PastePrefabsAsChildren _target;
+        private PastePrefabsAsChildren _target;
 
-        void OnEnable()
+        private void OnEnable()
         {
             _target = target as PastePrefabsAsChildren;
             ActiveEditorTracker.sharedTracker.isLocked = true;
@@ -25,9 +25,7 @@ namespace UsefulTools.Editor.Flat
                     _target.NumberOfInserts);
 
                 foreach (var clone in clones)
-                {
                     clone.transform.localPosition = Vector3.zero;
-                }
 
                 Undo.DestroyObjectImmediate(_target);
                 GUIUtility.ExitGUI();

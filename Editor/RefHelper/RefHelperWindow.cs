@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -8,102 +7,99 @@ namespace UsefulTools.Editor.RefHelper
 {
     public class RefHelperWindow : EditorWindow
     {
-        private RefHelperData _refHelperData;
-        private IRefHelperSaveLoad _saveLoad;
         private Object _nextRef;
         private bool _isSubscribed;
 
         private GUIStyle _headerTextStyle;
         private Vector2 _scrollPosition;
 
-        private RefHelperData RefHelperData => _refHelperData ??= new RefHelperData();
-        private IRefHelperSaveLoad SaveLoad => _saveLoad ??= new RefHelperSaveLoadScriptable();
-        private List<Object> ReferencedObjects => RefHelperData.ReferencedObjects ??= new List<Object>();
-        private List<Object> LastSelectedObjects => RefHelperData.LastSelectedObjects ??= new List<Object>();
-
         [MenuItem("Tools/UsefulTools/Ref Helper Window")]
         private static void Init()
         {
+            Debug.Log($"[DEBUG]<color=white>{nameof(RefHelperWindow)}.{nameof(Init)}></color> " +
+                      "");
+
             var window = GetWindow<RefHelperWindow>("RefHelper");
             window.minSize = new Vector2(250, 250);
             window.Show();
         }
 
-        private void OnEnable()
-        {
-            SubscribeToSelectionChange();
-            _refHelperData = SaveLoad.LoadData();
-        }
+        private void OnEnable() => SubscribeToSelectionChange();
 
-        private void OnDestroy()
-        {
-            UnsubscribeFromSelectionChange();
-            SaveLoad.SaveData(_refHelperData);
-        }
+        private void OnDestroy() => UnsubscribeFromSelectionChange();
 
         private void OnGUI()
         {
             InitHeaderStyle();
             Resubscribe();
             UpdateGUI();
-            SaveLoad.SaveData(_refHelperData);
         }
 
         private void UpdateGUI()
         {
-            ClearEmptyRefs();
+            using var refWrapper = new RefHelperDataWrapper();
+            var data = refWrapper.Data;
 
-            DrawLastSelectedObjects();
+            ClearEmptyRefs(ref data);
+
+            DrawLastSelectedObjects(ref data);
 
             GUILayout.Space(10);
 
-            GUILayout.BeginVertical();
-            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
+            DrawSavedRefs(ref data);
 
-            DrawSavedRefs();
-
-            GUILayout.EndScrollView();
             GUILayout.Space(5);
 
-            DrawClearSaved();
+            DrawClearSaved(ref data);
 
             GUILayout.EndVertical();
             GUILayout.FlexibleSpace();
         }
 
-        private void ClearEmptyRefs()
+        private void ClearEmptyRefs(ref RefHelperData data)
         {
-            for (int i = LastSelectedObjects.Count - 1; i >= 0; i--)
+            var lastSelectedObjects = data.LastSelectedObjects;
+            var referencedObjects = data.ReferencedObjects;
+
+            for (int i = lastSelectedObjects.Count - 1; i >= 0; i--)
             {
-                if (LastSelectedObjects[i] == null)
+                if (lastSelectedObjects[i] == null)
                 {
-                    LastSelectedObjects.RemoveAt(i);
+                    lastSelectedObjects.RemoveAt(i);
                 }
             }
 
-            for (int j = ReferencedObjects.Count - 1; j >= 0; j--)
+            for (int j = referencedObjects.Count - 1; j >= 0; j--)
             {
-                if (ReferencedObjects[j] == null)
+                if (referencedObjects[j] == null)
                 {
-                    ReferencedObjects.RemoveAt(j);
+                    referencedObjects.RemoveAt(j);
                 }
             }
         }
 
-        private void DrawLastSelectedObjects()
+        private void DrawLastSelectedObjects(ref RefHelperData data)
         {
             GUILayout.BeginVertical();
             GUILayout.Label("History", _headerTextStyle);
 
-            RefHelperData.LastSelectedObjectsMaxCount =
-                EditorGUILayout.DelayedIntField("Max Count", RefHelperData.LastSelectedObjectsMaxCount);
+            data.LastSelectedObjectsMaxCount =
+                EditorGUILayout.DelayedIntField("Max Count", data.LastSelectedObjectsMaxCount);
 
-            int maxIndex = LastSelectedObjects.Count - 1;
+            int maxIndex = data.LastSelectedObjects.Count - 1;
 
             for (int i = maxIndex; i >= 0; i--)
             {
-                var selectedObject = LastSelectedObjects[i];
-                DrawObjectToHistory(selectedObject, () => ReferencedObjects.Add(selectedObject));
+                var selectedObject = data.LastSelectedObjects[i];
+
+                void ButtonCallback()
+                {
+                    using var refWrapper = new RefHelperDataWrapper();
+                    var refData = refWrapper.Data;
+                    refData.ReferencedObjects.Add(selectedObject);
+                }
+
+                DrawObjectToHistory(selectedObject, ButtonCallback);
             }
 
             GUILayout.EndVertical();
@@ -130,24 +126,60 @@ namespace UsefulTools.Editor.RefHelper
             GUILayout.EndHorizontal();
         }
 
-        private void DrawSavedRefs()
+        private void DrawSavedRefs(ref RefHelperData data)
         {
             // GUILayout.BeginHorizontal();
             GUILayout.Label("Saved", _headerTextStyle);
             // GUILayout.Space(25);
-            DrawNextSaveRef();
+            DrawNextSaveRef(ref data);
             // GUILayout.EndHorizontal();
 
-            for (int i = 0; i < ReferencedObjects.Count; i++)
+            GUILayout.BeginVertical();
+            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
+
+            var referencedObjects = data.ReferencedObjects;
+
+            for (int i = 0; i < referencedObjects.Count; i++)
             {
-                var referencedObject = ReferencedObjects[i];
+                var referencedObject = referencedObjects[i];
                 int removeAtIndex = i;
 
-                if (!DrawSavedObject(referencedObject, () => ReferencedObjects.RemoveAt(removeAtIndex)))
+                void ButtonCallback()
+                {
+                    using var refWrapper = new RefHelperDataWrapper();
+                    var refData = refWrapper.Data;
+                    refData.ReferencedObjects.RemoveAt(removeAtIndex);
+                }
+
+                if (!DrawSavedObject(referencedObject, ButtonCallback))
                 {
                     return;
                 }
             }
+
+            GUILayout.EndScrollView();
+        }
+
+        private void DrawNextSaveRef(ref RefHelperData data)
+        {
+            GUILayout.BeginHorizontal();
+
+            // GUILayout.FlexibleSpace();
+            GUILayout.Label("Drop To Save");
+
+            _nextRef = EditorGUILayout.ObjectField(
+                _nextRef,
+                typeof(Object),
+                true
+            );
+
+            if (_nextRef != null)
+            {
+                data.ReferencedObjects.Add(_nextRef);
+                _nextRef = null;
+            }
+
+            GUILayout.EndHorizontal();
         }
 
         private static bool DrawSavedObject(Object savedObject, Action buttonCallback)
@@ -175,36 +207,14 @@ namespace UsefulTools.Editor.RefHelper
             return true;
         }
 
-        private void DrawNextSaveRef()
-        {
-            GUILayout.BeginHorizontal();
-
-            // GUILayout.FlexibleSpace();
-            GUILayout.Label("Drop To Save");
-
-            _nextRef = EditorGUILayout.ObjectField(
-                _nextRef,
-                typeof(Object),
-                true
-            );
-
-            if (_nextRef != null)
-            {
-                ReferencedObjects.Add(_nextRef);
-                _nextRef = null;
-            }
-
-            GUILayout.EndHorizontal();
-        }
-
-        private void DrawClearSaved()
+        private void DrawClearSaved(ref RefHelperData data)
         {
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button("Clear Saved"))
             {
-                ReferencedObjects.Clear();
+                data.ReferencedObjects.Clear();
             }
 
             GUILayout.EndHorizontal();
@@ -240,15 +250,19 @@ namespace UsefulTools.Editor.RefHelper
 
         private void UpdateLastSelectedObjects()
         {
+            using var refWrapper = new RefHelperDataWrapper();
+            var data = refWrapper.Data;
+
             if (Selection.count != 1)
             {
                 return;
             }
 
-            LastSelectedObjects.Add(Selection.objects[0]);
+            var lastSelectedObjects = data.LastSelectedObjects;
+            lastSelectedObjects.Add(Selection.objects[0]);
 
-            while (LastSelectedObjects.Count > RefHelperData.LastSelectedObjectsMaxCount)
-                LastSelectedObjects.RemoveAt(0);
+            while (lastSelectedObjects.Count > data.LastSelectedObjectsMaxCount)
+                lastSelectedObjects.RemoveAt(0);
 
             Repaint();
         }

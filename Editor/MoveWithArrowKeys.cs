@@ -14,18 +14,18 @@ namespace UsefulTools.Editor
             X = 30
         }
 
-        static float staticAmountToMove = 1;
-        static bool stepFrameOnMove;
+        private static float staticAmountToMove = 1;
+        private static bool stepFrameOnMove;
 
-        static Vector3 rightDirection;
-        static Vector3 leftDirection;
-        static Vector3 upDirection;
-        static Vector3 downDirection;
+        private static Vector3 rightDirection;
+        private static Vector3 leftDirection;
+        private static Vector3 upDirection;
+        private static Vector3 downDirection;
 
         public Directions FacingFromDirection = Directions.NegativeZ_2D;
 
         [MenuItem("Tools/UsefulTools/Move With ArrowKeys/Move With ArrowKeys Window %#UP")]
-        static void Init()
+        private static void Init()
         {
             var window = GetWindow<MoveWithArrowKeys>("Move With Arrow Keys");
 
@@ -37,7 +37,7 @@ namespace UsefulTools.Editor
             window.Show();
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
 //	        Debug.Log("Window width: " + position.width);
 //	        Debug.Log("Window height: " + position.height);
@@ -45,7 +45,7 @@ namespace UsefulTools.Editor
             EditorGUI.BeginChangeCheck();
 
             GUILayout.Label("Facing From Direction");
-            FacingFromDirection = (Directions) EditorGUILayout.EnumPopup(FacingFromDirection);
+            FacingFromDirection = (Directions)EditorGUILayout.EnumPopup(FacingFromDirection);
             stepFrameOnMove = EditorGUILayout.Toggle("Step frame on move: ", stepFrameOnMove);
             ChangeFacingFromDirection();
 
@@ -80,12 +80,9 @@ namespace UsefulTools.Editor
             }
         }
 
-        void OnDestroy()
-        {
-            staticAmountToMove = 0;
-        }
+        private void OnDestroy() => staticAmountToMove = 0;
 
-        void ChangeFacingFromDirection()
+        private void ChangeFacingFromDirection()
         {
             switch (FacingFromDirection)
             {
@@ -95,18 +92,21 @@ namespace UsefulTools.Editor
                     upDirection = new Vector3(0, 1, 0);
                     downDirection = new Vector3(0, -1, 0);
                     break;
+
                 case Directions.Z:
                     rightDirection = new Vector3(-1, 0, 0);
                     leftDirection = new Vector3(1, 0, 0);
                     upDirection = new Vector3(0, 1, 0);
                     downDirection = new Vector3(0, -1, 0);
                     break;
+
                 case Directions.Y:
                     rightDirection = new Vector3(1, 0, 0);
                     leftDirection = new Vector3(-1, 0, 0);
                     upDirection = new Vector3(0, 0, 1);
                     downDirection = new Vector3(0, 0, -1);
                     break;
+
                 case Directions.X:
                     rightDirection = new Vector3(0, 0, 1);
                     leftDirection = new Vector3(0, 0, -1);
@@ -116,7 +116,7 @@ namespace UsefulTools.Editor
             }
         }
 
-        static void MoveSelected(Vector3 direction)
+        private static void MoveSelected(Vector3 direction)
         {
             var selectedTransforms = Selection.GetTransforms(SelectionMode.Unfiltered);
 
@@ -143,27 +143,15 @@ namespace UsefulTools.Editor
         }
 
         [MenuItem("Tools/UsefulTools/Move With ArrowKeys/Move/Right %RIGHT")]
-        static void MoveRight()
-        {
-            MoveSelected(rightDirection);
-        }
+        private static void MoveRight() => MoveSelected(rightDirection);
 
         [MenuItem("Tools/UsefulTools/Move With ArrowKeys/Move/Left %LEFT")]
-        static void MoveLeft()
-        {
-            MoveSelected(leftDirection);
-        }
+        private static void MoveLeft() => MoveSelected(leftDirection);
 
         [MenuItem("Tools/UsefulTools/Move With ArrowKeys/Move/Up %UP")]
-        static void MoveUp()
-        {
-            MoveSelected(upDirection);
-        }
+        private static void MoveUp() => MoveSelected(upDirection);
 
         [MenuItem("Tools/UsefulTools/Move With ArrowKeys/Move/Down %DOWN")]
-        static void MoveDown()
-        {
-            MoveSelected(downDirection);
-        }
+        private static void MoveDown() => MoveSelected(downDirection);
     }
 }

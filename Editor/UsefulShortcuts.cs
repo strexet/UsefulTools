@@ -20,6 +20,7 @@ namespace UsefulTools.Editor
 
                 var newAnchorsMin = new Vector2(t.anchorMin.x + t.offsetMin.x / pt.rect.width,
                     t.anchorMin.y + t.offsetMin.y / pt.rect.height);
+
                 var newAnchorsMax = new Vector2(t.anchorMax.x + t.offsetMax.x / pt.rect.width,
                     t.anchorMax.y + t.offsetMax.y / pt.rect.height);
 
@@ -46,9 +47,6 @@ namespace UsefulTools.Editor
         }
 
         [MenuItem("Tools/UsefulTools/Pause Game _.")]
-        public static void PauseGame()
-        {
-            Debug.Break();
-        }
+        public static void PauseGame() => Debug.Break();
     }
 }

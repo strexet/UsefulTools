@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace UsefulTools.Editor.RefHelper
 {
-    public class RefHelperSaveData
+    public class RefHelperSaveDataScriptable : ScriptableObject
     {
         public int LastSelectedObjectsMaxCount;
         public string[] ReferencedPaths;
         public string[] LastSelectedPaths;
 
-        public RefHelperSaveData(RefHelperData data)
+        public void Init(RefHelperData data)
         {
             LastSelectedObjectsMaxCount = data.LastSelectedObjectsMaxCount;
             ReferencedPaths = GetPathsArray(data.ReferencedObjects);

@@ -7,31 +7,25 @@ namespace UsefulTools.Editor
 {
     public class EditorScreenshot : EditorWindow
     {
-        const string NextScreenshotIndexPrefsKey = "EditorScreenshot.nextScreenshotIndex";
-        const string ScreenshotFolderPathPrefsKey = "EditorScreenshot.screenshotFolderPath";
-        const string ScreenshotFilenamePrefixPrefsKey = "EditorScreenshot.screenshotFilenamePrefix";
+        private const string NextScreenshotIndexPrefsKey = "EditorScreenshot.nextScreenshotIndex";
+        private const string ScreenshotFolderPathPrefsKey = "EditorScreenshot.screenshotFolderPath";
+        private const string ScreenshotFilenamePrefixPrefsKey = "EditorScreenshot.screenshotFilenamePrefix";
 
-        const string DefaultScreenshotFolderPath = "!Screenshots";
-        const string DefaultScreenshotFilenamePrefix = "screenshot_";
-        const int DefaultNextScreenshotIndex = 0;
+        private const string DefaultScreenshotFolderPath = "!Screenshots";
+        private const string DefaultScreenshotFilenamePrefix = "screenshot_";
+        private const int DefaultNextScreenshotIndex = 0;
 
-        int nextScreenshotIndex;
-        string screenshotFilenamePrefix;
-        string screenshotFolderPath;
+        private int nextScreenshotIndex;
+        private string screenshotFilenamePrefix;
+        private string screenshotFolderPath;
 
         [MenuItem("Tools/UsefulTools/Editor Screenshot/Editor Screenshot Window")]
-        static void Init()
-        {
-            GetOrCreateWindow();
-        }
+        private static void Init() => GetOrCreateWindow();
 
         [MenuItem("Tools/UsefulTools/Editor Screenshot/Take Screenshot _F11")]
-        static void StaticTakeScreenshot()
-        {
-            GetOrCreateWindow().TakeScreenshot();
-        }
+        private static void StaticTakeScreenshot() => GetOrCreateWindow().TakeScreenshot();
 
-        static EditorScreenshot GetOrCreateWindow()
+        private static EditorScreenshot GetOrCreateWindow()
         {
             var editorScreenshot = GetWindow<EditorScreenshot>("Screenshot");
 
@@ -47,12 +41,13 @@ namespace UsefulTools.Editor
             return editorScreenshot;
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             EditorGUI.BeginChangeCheck();
 
             var savePathLabel =
                 new GUIContent("Save path", "Save path for the screenshots in Assets");
+
             screenshotFolderPath = EditorGUILayout.TextField(savePathLabel, screenshotFolderPath);
             screenshotFilenamePrefix = EditorGUILayout.TextField("Screenshot prefix", screenshotFilenamePrefix);
             nextScreenshotIndex = EditorGUILayout.IntField("Next screenshot index", nextScreenshotIndex);
@@ -70,9 +65,9 @@ namespace UsefulTools.Editor
             }
         }
 
-        void TakeScreenshot()
+        private void TakeScreenshot()
         {
-            var filePath = GetPath();
+            string filePath = GetPath();
 
             SetFocusToGameView();
             ScreenCapture.CaptureScreenshot(filePath);
@@ -83,23 +78,23 @@ namespace UsefulTools.Editor
             EditorPrefs.SetInt(NextScreenshotIndexPrefsKey, nextScreenshotIndex);
         }
 
-        string GetPath()
+        private string GetPath()
         {
-            var directoryPath = $"{Application.dataPath}/{screenshotFolderPath}";
+            string directoryPath = $"{Application.dataPath}/{screenshotFolderPath}";
 
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
             }
 
-            var filePath = $"{directoryPath}/{screenshotFilenamePrefix}{nextScreenshotIndex:00}.png";
+            string filePath = $"{directoryPath}/{screenshotFilenamePrefix}{nextScreenshotIndex:00}.png";
             return filePath;
         }
 
-        void SetFocusToGameView()
+        private void SetFocusToGameView()
         {
             // Get name of current focused window, which should be "  (UnityEditor.GameView)" if it is a Game view
-            var focusedWindowName = focusedWindow.ToString();
+            string focusedWindowName = focusedWindow.ToString();
             if (!focusedWindowName.Contains("UnityEditor.GameView"))
             {
                 // Since no Game view is focused right now, focus on any Game view, or create one if needed

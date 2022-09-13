@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UsefulTools.Attributes.ReadOnly;
 
 namespace UsefulTools
 {
@@ -14,7 +13,7 @@ namespace UsefulTools
         public float _distanceBetween;
         public float _fullLength;
         public Vector3 _placeWorldDirection;
-        
+
         private int _count;
 
         private void Update()
@@ -71,7 +70,7 @@ namespace UsefulTools
             {
                 _transforms.Clear();
 
-                for (var i = 0; i < transform.childCount; i++)
+                for (int i = 0; i < transform.childCount; i++)
                     _transforms.Add(transform.GetChild(i));
             }
         }
@@ -85,7 +84,7 @@ namespace UsefulTools
 
                 _transforms.Clear();
 
-                for (var i = 0; i < _count; i++)
+                for (int i = 0; i < _count; i++)
                 {
                     var obj = Instantiate(_originalObj, transform);
                     obj.SetActive(true);
@@ -100,9 +99,9 @@ namespace UsefulTools
 
             var center = transform.position;
 
-            var signCount = 0;
-            var placeCount = 0;
-            var startIndex = 0;
+            int signCount = 0;
+            int placeCount = 0;
+            int startIndex = 0;
 
             Vector3 singleOffset;
             Vector3 startOffset;

@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace Tartaria.Codebase.Infrastructure
+namespace UsefulTools.Runtime.Values
 {
     public class DynamicValue
     {
@@ -10,10 +10,7 @@ namespace Tartaria.Codebase.Infrastructure
 
         private float _nextValue;
 
-        public DynamicValue(float startValue)
-        {
-            ChangeTo(startValue);
-        }
+        public DynamicValue(float startValue) => ChangeTo(startValue);
 
         public void ChangeTo(float value)
         {
@@ -22,10 +19,7 @@ namespace Tartaria.Codebase.Infrastructure
             _nextValue = value;
         }
 
-        public void ChangeTo(float value, float duration)
-        {
-            SmoothChange(value, duration);
-        }
+        public void ChangeTo(float value, float duration) => SmoothChange(value, duration);
 
         public void StopSmoothChange()
         {

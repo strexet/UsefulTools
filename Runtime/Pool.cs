@@ -4,105 +4,112 @@ using UnityEngine;
 
 namespace UsefulTools.Runtime
 {
-	public class Pool
-	{
-		private static Pool _instance;
-		private static Pool Instance => _instance ??= new Pool();
+    public class Pool
+    {
+        private static Pool _instance;
+        private static Pool Instance => _instance ??= new Pool();
 
-		private readonly Dictionary<Type, ObjectPool> _pools;
+        private readonly Dictionary<Type, ObjectPool> _pools;
 
-		private Pool()
-		{
-			_pools = new Dictionary<Type, ObjectPool>();
-		}
+        private Pool() => _pools = new Dictionary<Type, ObjectPool>();
 
-		public static T Get<T>() where T : new()
-		{
-			if (Instance.GetFromPool(typeof(T), out object fromPool))
-				return (T)fromPool;
+        public static T Get<T>() where T : new()
+        {
+            if (Instance.GetFromPool(typeof(T), out object fromPool))
+            {
+                return (T)fromPool;
+            }
 
-			return new T();
-		}
+            return new T();
+        }
 
-		public static void Release(object poolable)
-		{
-			if (poolable == null)
-				return;
-			
-			Instance.ReturnToPool(poolable.GetType(), poolable);
-		}
+        public static void Release(object poolable)
+        {
+            if (poolable == null)
+            {
+                return;
+            }
 
-		private bool GetFromPool(Type type, out object fromPool)
-		{
-			var pool = GetPool(type);
+            Instance.ReturnToPool(poolable.GetType(), poolable);
+        }
 
-			if (pool.Count > 0)
-			{
-				fromPool = pool.Get();
-				return true;
-			}
+        private bool GetFromPool(Type type, out object fromPool)
+        {
+            var pool = GetPool(type);
 
-			fromPool = default;
-			return false;
-		}
+            if (pool.Count > 0)
+            {
+                fromPool = pool.Get();
+                return true;
+            }
 
-		private void ReturnToPool(Type type, object poolable)
-		{
-			var pool = GetPool(type);
-			pool.Return(poolable);
-		}
+            fromPool = default;
+            return false;
+        }
 
-		private ObjectPool GetPool(Type type)
-		{
-			if (_pools.TryGetValue(type, out var pool))
-				return pool;
+        private void ReturnToPool(Type type, object poolable)
+        {
+            var pool = GetPool(type);
+            pool.Return(poolable);
+        }
 
-			pool = new ObjectPool();
-			_pools.Add(type, pool);
+        private ObjectPool GetPool(Type type)
+        {
+            if (_pools.TryGetValue(type, out var pool))
+            {
+                return pool;
+            }
 
-			return pool;
-		}
+            pool = new ObjectPool();
+            _pools.Add(type, pool);
 
-		private class ObjectPool
-		{
-			private readonly Stack<object> pooled;
-			private readonly HashSet<object> pooledSet;
-			
-			public int Count { get; private set; }
+            return pool;
+        }
 
-			public ObjectPool()
-			{
-				pooled = new Stack<object>();
-				pooledSet = new HashSet<object>();
-				Count = 0;
-			}
+        private class ObjectPool
+        {
+            private readonly Stack<object> pooled;
+            private readonly HashSet<object> pooledSet;
 
-			public object Get()
-			{
-				object fromPool = pooled.Pop();
-				pooledSet.Remove(fromPool);
-				
-				Count--;
+            public int Count { get; private set; }
 
-				return fromPool;
-			}
+            public ObjectPool()
+            {
+                pooled = new Stack<object>();
+                pooledSet = new HashSet<object>();
+                Count = 0;
+            }
 
-			public void Return(object poolable)
-			{
-				if (pooledSet.Contains(poolable))
-				{
-					Debug.LogError($"{nameof(ObjectPool)}.{nameof(ReturnToPool)}> Poolable object is already returned to pool: {poolable.GetType().Name}");
-					return;
-				}
-				
-				if (poolable is IDisposable disposable)
-					disposable.Dispose();
+            public object Get()
+            {
+                object fromPool = pooled.Pop();
+                pooledSet.Remove(fromPool);
 
-				pooledSet.Add(poolable);
-				pooled.Push(poolable);
+                Count--;
 
-				Count++;
-			}
-		}
-	}
+                return fromPool;
+            }
+
+            public void Return(object poolable)
+            {
+                if (pooledSet.Contains(poolable))
+                {
+                    Debug.LogError(
+                        $"{nameof(ObjectPool)}.{nameof(ReturnToPool)}> Poolable object is already returned to pool: {poolable.GetType().Name}");
+
+                    return;
+                }
+
+                if (poolable is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+
+                pooledSet.Add(poolable);
+                pooled.Push(poolable);
+
+                Count++;
+            }
+        }
+    }
 }
