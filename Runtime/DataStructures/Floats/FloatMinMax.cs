@@ -1,7 +1,7 @@
 using System;
 using Random = UnityEngine.Random;
 
-namespace Tartaria.Codebase.DataStructures.Floats
+namespace UsefulTools.Runtime.DataStructures.Floats
 {
     [Serializable]
     public struct FloatMinMax : IRandomFloat, IScalable<FloatMinMax>
@@ -24,19 +24,10 @@ namespace Tartaria.Codebase.DataStructures.Floats
             this.max = max;
         }
 
-        public FloatMinMax Scale(float scale)
-        {
-            return new FloatMinMax(min * scale, max * scale);
-        }
+        public FloatMinMax Scale(float scale) => new(min * scale, max * scale);
 
-        public override string ToString()
-        {
-            return $"[{min}; {max}])";
-        }
+        public override string ToString() => $"[{min}; {max}])";
 
-        public static implicit operator FloatMinMax(float value)
-        {
-            return new FloatMinMax(value);
-        }
+        public static implicit operator FloatMinMax(float value) => new(value);
     }
 }

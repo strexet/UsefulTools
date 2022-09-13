@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Tartaria.Codebase.DataStructures
+namespace UsefulTools.Runtime.DataStructures
 {
     public abstract class MonoBehaviourImplementation<T> : MonoBehaviour
     {

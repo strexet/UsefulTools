@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using Khutor.Scripts.Attributes;
 using UnityEditor;
 using UnityEngine;
 
-namespace Khutor.Editor.Editor.PropertyDrawers
+namespace UsefulTools.Runtime.Attributes.Editor
 {
     [CustomPropertyDrawer(typeof(PopupAttribute))]
     public class PopupAttributePropertyDrawer : PropertyDrawer
@@ -14,7 +13,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
             var field = atb?.ContainingType.GetField(atb.PropertyName);
 
             if (field == null)
+            {
                 return;
+            }
 
             var propertyType = property.serializedObject.targetObject.GetType();
             object value = field.GetValue(propertyType);
@@ -26,7 +27,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
                 int selectedIndex = options.IndexOf(property.stringValue);
 
                 if (selectedIndex == -1 && string.IsNullOrEmpty(property.stringValue))
+                {
                     selectedIndex = 0;
+                }
 
                 if (selectedIndex >= 0)
                 {
@@ -37,7 +40,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
             }
 
             if (!didDisplayPopup)
+            {
                 EditorGUI.PropertyField(position, property, label);
+            }
         }
     }
 }

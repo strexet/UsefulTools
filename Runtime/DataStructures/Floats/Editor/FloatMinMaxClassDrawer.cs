@@ -1,11 +1,10 @@
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
 using Sirenix.Utilities.Editor;
-using Tartaria.Codebase.DataStructures.Floats;
 using UnityEditor;
 using UnityEngine;
 
-namespace Tartaria.Codebase.DataStructures.Editor
+namespace UsefulTools.Runtime.DataStructures.Floats.Editor
 {
     public class FloatMinMaxClassDrawer : OdinValueDrawer<FloatMinMax>
     {
@@ -25,7 +24,7 @@ namespace Tartaria.Codebase.DataStructures.Editor
             GUIHelper.PushLabelWidth(40f);
             min = SirenixEditorFields.FloatField(rect.AlignLeft(rect.width * 0.5f), "Min", min);
             GUIHelper.PopLabelWidth();
-            
+
             GUIHelper.PushLabelWidth(43f);
             max = SirenixEditorFields.FloatField(rect.AlignRight(rect.width * 0.5f), "Max", max);
             GUIHelper.PopLabelWidth();

@@ -1,8 +1,7 @@
 using System;
-using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Tartaria.Codebase.DataStructures.Floats
+namespace UsefulTools.Runtime.DataStructures.Floats
 {
     [Serializable]
     public struct FloatWithSpread : IRandomFloat, IScalable<FloatWithSpread>
@@ -35,14 +34,8 @@ namespace Tartaria.Codebase.DataStructures.Floats
             return floatWithSpread;
         }
 
-        public override string ToString()
-        {
-            return $"[{value} (+{spread})]";
-        }
+        public override string ToString() => $"[{value} (+{spread})]";
 
-        public static implicit operator FloatWithSpread(float value)
-        {
-            return new FloatWithSpread(value);
-        }
+        public static implicit operator FloatWithSpread(float value) => new(value);
     }
 }

@@ -60,7 +60,7 @@ namespace UsefulTools.Runtime
                         Debug.LogError($"Have more that one {typeof(T).Name} in scene. " +
                                        "But this is Singleton! Check project.");
 
-                        for (var i = 0; i < managers.Length; ++i)
+                        for (int i = 0; i < managers.Length; ++i)
                         {
                             var manager = managers[i];
                             Destroy(manager.gameObject);
@@ -113,15 +113,9 @@ namespace UsefulTools.Runtime
             }
         }
 
-        protected void OnDestroy()
-        {
-            alive = false;
-        }
+        protected void OnDestroy() => alive = false;
 
-        protected void OnApplicationQuit()
-        {
-            alive = false;
-        }
+        protected void OnApplicationQuit() => alive = false;
 
         protected virtual void Initialization() { }
     }

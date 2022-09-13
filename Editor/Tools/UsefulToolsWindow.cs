@@ -9,36 +9,36 @@ namespace UsefulTools.Editor.Tools
 {
     public class UsefulToolsWindow : EditorWindow
     {
-        static readonly string[] Options = { "Prefix", "Suffix" };
-        string additionToName;
-        readonly float bigSpacePixelsCount = 20f;
-        string byComponentName = "";
-        string byObjectName = "";
-        Material commonMaterial;
-        string folderName = "NewFolder";
-        GUIStyle headerTextStyle;
-        string insertionSuffixForName = "";
-        bool isActiveInHierarchy;
-        string namePart = "NamePart";
-        string newName = "NewName";
-        int numberOfInserts;
-        List<GameObject> objectsToInsertRemove;
-        readonly EditorList<GameObject> objectsToInsertRemoveEditorList = new EditorList<GameObject>(1);
-        List<Transform> optionalParents;
-        readonly EditorList<Transform> optionalParentsEditorList = new EditorList<Transform>(1);
-        string prefix = "";
-        string replaceFor = "ReplaceFor";
-        bool saveCurrentSelection;
-        Vector2 scrollPosition;
-        int selectedAddition = 2;
-        bool selectInserted = true;
-        readonly float smallSpacePixelsCount = 5f;
-        string suffix = "";
-        int logLineLength = 120;
-        string hierarchyPath = "";
+        private static readonly string[] Options = { "Prefix", "Suffix" };
+        private string additionToName;
+        private readonly float bigSpacePixelsCount = 20f;
+        private string byComponentName = "";
+        private string byObjectName = "";
+        private Material commonMaterial;
+        private string folderName = "NewFolder";
+        private GUIStyle headerTextStyle;
+        private string insertionSuffixForName = "";
+        private bool isActiveInHierarchy;
+        private string namePart = "NamePart";
+        private string newName = "NewName";
+        private int numberOfInserts;
+        private List<GameObject> objectsToInsertRemove;
+        private readonly EditorList<GameObject> objectsToInsertRemoveEditorList = new(1);
+        private List<Transform> optionalParents;
+        private readonly EditorList<Transform> optionalParentsEditorList = new(1);
+        private string prefix = "";
+        private string replaceFor = "ReplaceFor";
+        private bool saveCurrentSelection;
+        private Vector2 scrollPosition;
+        private int selectedAddition = 2;
+        private bool selectInserted = true;
+        private readonly float smallSpacePixelsCount = 5f;
+        private string suffix = "";
+        private int logLineLength = 120;
+        private string hierarchyPath = "";
 
         [MenuItem("Tools/UsefulTools/Tools Window", false, 0)]
-        static void Init()
+        private static void Init()
         {
             var window = GetWindow<UsefulToolsWindow>();
             window.minSize = new Vector2(312, 50);
@@ -46,7 +46,7 @@ namespace UsefulTools.Editor.Tools
             window.Show();
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             InitHeaderStyle();
 
@@ -66,7 +66,7 @@ namespace UsefulTools.Editor.Tools
             GUILayout.EndVertical();
         }
 
-        void DrawLogLine()
+        private void DrawLogLine()
         {
             GUILayout.Label("Log Line", headerTextStyle);
             logLineLength = EditorGUILayout.IntField("Line Length", logLineLength);
@@ -83,7 +83,7 @@ namespace UsefulTools.Editor.Tools
             GUILayout.Space(bigSpacePixelsCount);
         }
 
-        void DrawSelectObjectsWithCommonMaterialMenu()
+        private void DrawSelectObjectsWithCommonMaterialMenu()
         {
             GUILayout.Label("Select Objects With Common Material", headerTextStyle);
             GUILayout.Label("Common Material");
@@ -100,19 +100,21 @@ namespace UsefulTools.Editor.Tools
             GUILayout.Space(bigSpacePixelsCount);
         }
 
-        void DrawGetHierarchyPathOfSelectedObject()
+        private void DrawGetHierarchyPathOfSelectedObject()
         {
             GUILayout.Label("Get Hierarchy Path Of Selected Object", headerTextStyle);
 
             EditorGUILayout.TextField("Hierarchy Path", hierarchyPath);
 
             if (GUILayout.Button("Get Path"))
+            {
                 hierarchyPath = GetHierarchyPathOfSelectedObject();
+            }
 
             GUILayout.Space(bigSpacePixelsCount);
         }
 
-        void DrawSelectChildrenParenMenu()
+        private void DrawSelectChildrenParenMenu()
         {
             GUILayout.Label("Select relatives of current selected objects", headerTextStyle);
             GUILayout.BeginHorizontal();
@@ -132,7 +134,7 @@ namespace UsefulTools.Editor.Tools
             GUILayout.Space(bigSpacePixelsCount);
         }
 
-        void DrawRenameSelectedObjectsMenu()
+        private void DrawRenameSelectedObjectsMenu()
         {
             GUILayout.Label("Rename Selected Objects", headerTextStyle);
             GUILayout.Label("New Name");
@@ -170,7 +172,7 @@ namespace UsefulTools.Editor.Tools
             GUILayout.Space(bigSpacePixelsCount);
         }
 
-        void DrawSelectGameObjectsMenu()
+        private void DrawSelectGameObjectsMenu()
         {
             GUILayout.Label("Select GameObjects", headerTextStyle);
             GUILayout.Label("Search Root Transforms");
@@ -190,7 +192,7 @@ namespace UsefulTools.Editor.Tools
             GUILayout.Space(bigSpacePixelsCount);
         }
 
-        void DrawInsertRemoveObjectsMenu()
+        private void DrawInsertRemoveObjectsMenu()
         {
             GUILayout.Label("Insert/Remove objects (or prefab)", headerTextStyle);
             GUILayout.Label("Objects to insert/remove");
@@ -225,7 +227,7 @@ namespace UsefulTools.Editor.Tools
             GUILayout.Space(bigSpacePixelsCount);
         }
 
-        void DrawPackObjectsMenu()
+        private void DrawPackObjectsMenu()
         {
             GUILayout.Label("Pack objects", headerTextStyle);
 
@@ -240,14 +242,14 @@ namespace UsefulTools.Editor.Tools
             GUILayout.Space(bigSpacePixelsCount);
         }
 
-        void InitHeaderStyle()
+        private void InitHeaderStyle()
         {
             headerTextStyle = new GUIStyle(GUI.skin.label);
             headerTextStyle.fontSize = 14;
             headerTextStyle.stretchWidth = true;
         }
 
-        static void ReplaceNamePart(string part, string replacement)
+        private static void ReplaceNamePart(string part, string replacement)
         {
             var selectedGameObjects = Selection.gameObjects;
 
@@ -260,26 +262,24 @@ namespace UsefulTools.Editor.Tools
             Undo.RecordObjects(selectedGameObjects, "Replace Part Of The Name");
 
             foreach (var go in selectedGameObjects)
-            {
                 go.name = go.name.Replace(part, replacement);
-            }
         }
 
-        static void ReplaceNamePartForAsset(string part, string replacement)
+        private static void ReplaceNamePartForAsset(string part, string replacement)
         {
-            var selectedObjectsGUIDs = Selection.assetGUIDs;
+            string[] selectedObjectsGUIDs = Selection.assetGUIDs;
 
-            foreach (var guid in selectedObjectsGUIDs)
+            foreach (string guid in selectedObjectsGUIDs)
             {
-                var path = AssetDatabase.GUIDToAssetPath(guid);
-                var fileName = Path.GetFileName(path);
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                string fileName = Path.GetFileName(path);
                 if (fileName == null)
                 {
                     continue;
                 }
 
-                var newFileName = fileName.Replace(part, replacement);
-                var error = AssetDatabase.RenameAsset(path, newFileName);
+                string newFileName = fileName.Replace(part, replacement);
+                string error = AssetDatabase.RenameAsset(path, newFileName);
 
                 if (!string.IsNullOrEmpty(error))
                 {
@@ -291,7 +291,7 @@ namespace UsefulTools.Editor.Tools
             }
         }
 
-        void AddToName(int indexOfSelectedAddition, string additionToName)
+        private void AddToName(int indexOfSelectedAddition, string additionToName)
         {
             var selected = Selection.gameObjects;
 
@@ -319,12 +319,10 @@ namespace UsefulTools.Editor.Tools
             }
 
             foreach (var selectedObject in selected)
-            {
                 selectedObject.name = string.Format("{0}{1}{2}", prefix, selectedObject.name, suffix);
-            }
         }
 
-        void SelectObjectsByMaterial(Material mateial, bool activeInHierarchy)
+        private void SelectObjectsByMaterial(Material mateial, bool activeInHierarchy)
         {
             if (mateial == null)
             {
@@ -332,48 +330,50 @@ namespace UsefulTools.Editor.Tools
             }
 
             var properObjects = Resources.FindObjectsOfTypeAll(typeof(GameObject))
-                                         .Select(g => g as GameObject)
-                                         .Where(
-                                             g =>
-                                             {
-                                                 if (activeInHierarchy && g)
-                                                 {
-                                                     return g.activeInHierarchy;
-                                                 }
+               .Select(g => g as GameObject)
+               .Where(
+                    g =>
+                    {
+                        if (activeInHierarchy && g)
+                        {
+                            return g.activeInHierarchy;
+                        }
 
-                                                 return true;
-                                             })
-                                         .Where(
-                                             g =>
-                                             {
-                                                 var renderer = g.GetComponent<Renderer>();
+                        return true;
+                    })
+               .Where(
+                    g =>
+                    {
+                        var renderer = g.GetComponent<Renderer>();
 
-                                                 if (renderer == null)
-                                                 {
-                                                     return false;
-                                                 }
+                        if (renderer == null)
+                        {
+                            return false;
+                        }
 
-                                                 foreach (var sharedMaterial in renderer.sharedMaterials)
-                                                 {
-                                                     if (mateial.Equals(sharedMaterial))
-                                                     {
-                                                         return true;
-                                                     }
-                                                 }
+                        foreach (var sharedMaterial in renderer.sharedMaterials)
+                        {
+                            if (mateial.Equals(sharedMaterial))
+                            {
+                                return true;
+                            }
+                        }
 
-                                                 return false;
-                                             })
-                                         .ToArray();
+                        return false;
+                    })
+               .ToArray();
 
             Selection.objects = properObjects.ToArray();
         }
 
-        string GetHierarchyPathOfSelectedObject()
+        private string GetHierarchyPathOfSelectedObject()
         {
             var selected = Selection.gameObjects;
 
             if (selected.Length != 1)
+            {
                 return "Select one object to get its hierarchy path!";
+            }
 
             var reversedResultList = new List<string>();
 
@@ -389,17 +389,21 @@ namespace UsefulTools.Editor.Tools
             }
 
             if (reversedResultList.Count == 0)
+            {
                 return string.Empty;
+            }
 
             if (reversedResultList.Count == 1)
+            {
                 return reversedResultList[0];
+            }
 
             var result = new StringBuilder();
 
             for (int i = reversedResultList.Count - 1; i > 0; i--)
             {
                 result.Append(reversedResultList[i])
-                      .Append("/");
+                   .Append("/");
             }
 
             result.Append(reversedResultList[0]);
@@ -407,7 +411,7 @@ namespace UsefulTools.Editor.Tools
             return result.ToString();
         }
 
-        void SelectChildrenOrParentsOfSelectedObjects(bool selectChildrenNotParents, bool saveCurrentSelection)
+        private void SelectChildrenOrParentsOfSelectedObjects(bool selectChildrenNotParents, bool saveCurrentSelection)
         {
             var selected = Selection.gameObjects;
 
@@ -420,11 +424,11 @@ namespace UsefulTools.Editor.Tools
 
             foreach (var selectedObject in selected)
             {
-                var childCount = selectedObject.transform.childCount;
+                int childCount = selectedObject.transform.childCount;
                 var parent = selectedObject.transform.parent;
 
-                if (selectChildrenNotParents && childCount == 0 ||
-                    !selectChildrenNotParents && parent == null)
+                if ((selectChildrenNotParents && childCount == 0) ||
+                    (!selectChildrenNotParents && parent == null))
                 {
                     nextSelected.Add(selectedObject);
                     continue;
@@ -437,10 +441,8 @@ namespace UsefulTools.Editor.Tools
 
                 if (selectChildrenNotParents)
                 {
-                    for (var i = 0; i < childCount; i++)
-                    {
+                    for (int i = 0; i < childCount; i++)
                         nextSelected.Add(selectedObject.transform.GetChild(i).gameObject);
-                    }
                 }
                 else
                 {
@@ -451,7 +453,7 @@ namespace UsefulTools.Editor.Tools
             Selection.objects = nextSelected.ToArray();
         }
 
-        void SelectGameObjectsByNameAndComponent(string byObjectName, string byComponentName,
+        private void SelectGameObjectsByNameAndComponent(string byObjectName, string byComponentName,
             List<Transform> optionalParents)
         {
             var properObjects = new List<Object>();
@@ -459,57 +461,57 @@ namespace UsefulTools.Editor.Tools
             foreach (var optionalParent in optionalParents)
             {
                 properObjects.AddRange(Resources.FindObjectsOfTypeAll(typeof(GameObject))
-                                                .Select(g => g as GameObject)
-                                                .Where(
-                                                    g =>
-                                                    {
-                                                        if (optionalParent == null)
-                                                        {
-                                                            return true;
-                                                        }
+                   .Select(g => g as GameObject)
+                   .Where(
+                        g =>
+                        {
+                            if (optionalParent == null)
+                            {
+                                return true;
+                            }
 
-                                                        var parent = g.transform.parent;
+                            var parent = g.transform.parent;
 
-                                                        while (parent != null)
-                                                        {
-                                                            if (parent == optionalParent)
-                                                            {
-                                                                return true;
-                                                            }
+                            while (parent != null)
+                            {
+                                if (parent == optionalParent)
+                                {
+                                    return true;
+                                }
 
-                                                            parent = parent.parent;
-                                                        }
+                                parent = parent.parent;
+                            }
 
-                                                        return false;
-                                                    })
-                                                .Where(
-                                                    g =>
-                                                    {
-                                                        if (string.Empty == byObjectName
-                                                            && string.Empty != byComponentName)
-                                                        {
-                                                            return true;
-                                                        }
+                            return false;
+                        })
+                   .Where(
+                        g =>
+                        {
+                            if (string.Empty == byObjectName
+                                && string.Empty != byComponentName)
+                            {
+                                return true;
+                            }
 
-                                                        return g.name.Contains(byObjectName);
-                                                    })
-                                                .Where(
-                                                    g =>
-                                                    {
-                                                        if (string.Empty == byComponentName
-                                                            && string.Empty != byObjectName)
-                                                        {
-                                                            return true;
-                                                        }
+                            return g.name.Contains(byObjectName);
+                        })
+                   .Where(
+                        g =>
+                        {
+                            if (string.Empty == byComponentName
+                                && string.Empty != byObjectName)
+                            {
+                                return true;
+                            }
 
-                                                        return g.GetComponent(byComponentName) != null;
-                                                    }));
+                            return g.GetComponent(byComponentName) != null;
+                        }));
             }
 
             Selection.objects = properObjects.ToArray();
         }
 
-        void RenameSelectedObjects(string newName)
+        private void RenameSelectedObjects(string newName)
         {
             var selected = Selection.gameObjects;
 
@@ -521,12 +523,10 @@ namespace UsefulTools.Editor.Tools
             Undo.RecordObjects(selected, "Rename Objects");
 
             foreach (var selectedObject in selected)
-            {
                 selectedObject.name = newName;
-            }
         }
 
-        void PackSelectedObjectsInFolder(string folderName)
+        private void PackSelectedObjectsInFolder(string folderName)
         {
             var selectedObjects = Selection.gameObjects;
 
@@ -541,7 +541,7 @@ namespace UsefulTools.Editor.Tools
 
             Undo.RegisterCreatedObjectUndo(n, "Create Folder GameObject");
 
-            for (var i = 0; i < selectedObjects.Length; i++)
+            for (int i = 0; i < selectedObjects.Length; i++)
             {
                 Undo.SetTransformParent(selectedObjects[i].transform, n.transform,
                     "Set folding object's parent to the Folder");
@@ -550,7 +550,7 @@ namespace UsefulTools.Editor.Tools
             Selection.objects = new[] { n };
         }
 
-        void InsertObjectsIntoSelected(GameObject[] clonedObjects, int numberOfActions,
+        private void InsertObjectsIntoSelected(GameObject[] clonedObjects, int numberOfActions,
             string insertionSuffix,
             bool selectInserted)
         {
@@ -596,7 +596,7 @@ namespace UsefulTools.Editor.Tools
             }
         }
 
-        void DestroySelectedChildrenByObjectName(List<GameObject> objectsWithNameToDestroy)
+        private void DestroySelectedChildrenByObjectName(List<GameObject> objectsWithNameToDestroy)
         {
             if (objectsWithNameToDestroy.Count == 0)
             {
@@ -615,7 +615,7 @@ namespace UsefulTools.Editor.Tools
 
             foreach (var objectWithNameToDestroy in objectsWithNameToDestroy)
             {
-                var destroyName = objectWithNameToDestroy.name;
+                string destroyName = objectWithNameToDestroy.name;
 
                 var selected = Selection.gameObjects;
 

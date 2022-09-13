@@ -1,11 +1,10 @@
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
 using Sirenix.Utilities.Editor;
-using Tartaria.Codebase.DataStructures.Floats;
 using UnityEditor;
 using UnityEngine;
 
-namespace Tartaria.Codebase.DataStructures.Editor
+namespace UsefulTools.Runtime.DataStructures.Floats.Editor
 {
     public class FloatWithSpreadClassDrawer : OdinValueDrawer<FloatWithSpread>
     {
@@ -25,11 +24,10 @@ namespace Tartaria.Codebase.DataStructures.Editor
             GUIHelper.PushLabelWidth(66f);
             value = SirenixEditorFields.FloatField(rect.AlignLeft(rect.width * 0.5f), "Value", value);
             GUIHelper.PopLabelWidth();
-            
+
             GUIHelper.PushLabelWidth(74f);
             spread = SirenixEditorFields.FloatField(rect.AlignRight(rect.width * 0.5f), "Spread", spread);
             GUIHelper.PopLabelWidth();
-            
 
             smartValue.value = value;
             smartValue.spread = spread;

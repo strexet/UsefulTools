@@ -1,4 +1,4 @@
-namespace Tartaria.Codebase.DataStructures.Floats
+namespace UsefulTools.Runtime.DataStructures.Floats
 {
     public interface IRandomFloat
     {

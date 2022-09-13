@@ -1,9 +1,8 @@
 ﻿using System;
-using Khutor.Scripts.Collections;
 using UnityEditor;
 using UnityEngine;
 
-namespace Khutor.Editor.Editor.PropertyDrawers
+namespace UsefulTools.Runtime.DataStructures.Collections.Editor
 {
     [CustomPropertyDrawer(typeof(DrawableDictionary), true)]
     public class DrawableDictionaryPropertyDrawer : PropertyDrawer
@@ -38,15 +37,17 @@ namespace Khutor.Editor.Editor.PropertyDrawers
 
                 int count = keysProp.arraySize;
                 if (valuesProp.arraySize != count)
+                {
                     valuesProp.arraySize = count;
+                }
 
                 for (int i = 0; i < count; i++)
                 {
                     rect = GetNextRect(ref position);
-                    
+
                     float keyWidth = EditorGUIUtility.labelWidth;
                     float valueWidth = rect.width - keyWidth;
-                    
+
                     var keyRect = new Rect(rect.xMin, rect.yMin, keyWidth, rect.height);
                     var valueRect = new Rect(keyRect.xMax, rect.yMin, valueWidth, rect.height);
 
@@ -107,7 +108,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
                         {
                             value++;
                             if (value == int.MaxValue)
+                            {
                                 break;
+                            }
 
                             i = -1;
                         }
@@ -142,7 +145,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
                         {
                             value++;
                             if (value == int.MaxValue)
+                            {
                                 break;
+                            }
 
                             i = -1;
                         }
@@ -167,7 +172,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
                         {
                             value = IntToColor(ColorToInt(value) + 1);
                             if (value == Color.white)
+                            {
                                 break;
+                            }
 
                             i = -1;
                         }
@@ -192,7 +199,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
                         {
                             value++;
                             if (value == int.MaxValue)
+                            {
                                 break;
+                            }
 
                             i = -1;
                         }
@@ -216,7 +225,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
                             {
                                 value++;
                                 if (value >= max)
+                                {
                                     break;
+                                }
 
                                 i = -1;
                             }
@@ -236,7 +247,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
                         {
                             value.x++;
                             if (value.x == int.MaxValue)
+                            {
                                 break;
+                            }
 
                             i = -1;
                         }
@@ -255,7 +268,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
                         {
                             value.x++;
                             if (value.x == int.MaxValue)
+                            {
                                 break;
+                            }
 
                             i = -1;
                         }
@@ -274,7 +289,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
                         {
                             value.x++;
                             if (value.x == int.MaxValue)
+                            {
                                 break;
+                            }
 
                             i = -1;
                         }
@@ -299,7 +316,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
                         {
                             value++;
                             if (value == int.MaxValue)
+                            {
                                 break;
+                            }
 
                             i = -1;
                         }
@@ -318,7 +337,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
                         {
                             value++;
                             if (value == char.MaxValue)
+                            {
                                 break;
+                            }
 
                             i = -1;
                         }
@@ -348,7 +369,9 @@ namespace Khutor.Editor.Editor.PropertyDrawers
         private static void SetPropertyDefault(SerializedProperty prop)
         {
             if (prop == null)
+            {
                 throw new ArgumentNullException("prop");
+            }
 
             switch (prop.propertyType)
             {

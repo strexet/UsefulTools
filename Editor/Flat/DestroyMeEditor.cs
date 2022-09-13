@@ -6,8 +6,8 @@ namespace UsefulTools.Editor.Flat
     [CustomEditor(typeof(DestroyMe))]
     public class DestroyMeEditor : UnityEditor.Editor
     {
-        static DestroyMe _target;
-        static GameObject[] _selection;
+        private static DestroyMe _target;
+        private static GameObject[] _selection;
 
         public override void OnInspectorGUI()
         {
@@ -19,7 +19,7 @@ namespace UsefulTools.Editor.Flat
             }
 
             _target = target as DestroyMe;
-            _selection = new[] {_target.ToDestroy.gameObject};
+            _selection = new[] { _target.ToDestroy.gameObject };
 
             DestroyImmediate(_target.ToDestroy);
         }

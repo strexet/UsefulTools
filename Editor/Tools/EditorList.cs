@@ -9,39 +9,33 @@ namespace UsefulTools.Editor.Tools
     [Serializable]
     public class EditorList<T> where T : Object
     {
-        readonly List<T> list;
-        int count;
+        private readonly List<T> list;
 
-        public int Count => count;
+        public int Count { get; private set; }
 
         public EditorList(int listCapacity)
         {
             list = new List<T>(listCapacity);
-            count = listCapacity;
+            Count = listCapacity;
 
-            for (var i = 0; i < listCapacity; i++)
-            {
+            for (int i = 0; i < listCapacity; i++)
                 AddEmpty();
-            }
         }
 
-        public void AddEmpty()
-        {
-            list.Add(default);
-        }
+        public void AddEmpty() => list.Add(default);
 
         public void UpdateAndDraw(ref List<T> objectsToInsertRemove)
         {
             objectsToInsertRemove = list;
 
-            var newCount = -1;
+            int newCount = -1;
 
             if (GUILayout.Button("Reset"))
             {
                 newCount = 1;
                 objectsToInsertRemove.Clear();
-                objectsToInsertRemove.Add(default(T));
-                count = 1;
+                objectsToInsertRemove.Add(default);
+                Count = 1;
             }
 
             GUILayout.BeginHorizontal();
@@ -61,14 +55,12 @@ namespace UsefulTools.Editor.Tools
             GUILayout.EndHorizontal();
 
             while (newCount < objectsToInsertRemove.Count)
-            {
                 objectsToInsertRemove.RemoveAt(objectsToInsertRemove.Count - 1);
-            }
 
             while (newCount > objectsToInsertRemove.Count)
             {
                 var objectToAdd = default(T);
-                var count = objectsToInsertRemove.Count;
+                int count = objectsToInsertRemove.Count;
 
                 if (count > 0)
                 {
@@ -78,7 +70,7 @@ namespace UsefulTools.Editor.Tools
                 objectsToInsertRemove.Add(objectToAdd);
             }
 
-            for (var i = 0; i < objectsToInsertRemove.Count; i++)
+            for (int i = 0; i < objectsToInsertRemove.Count; i++)
             {
                 objectsToInsertRemove[i] = EditorGUILayout.ObjectField(
                     $"Element {i}:",

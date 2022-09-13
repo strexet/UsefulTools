@@ -19,7 +19,7 @@ namespace UsefulTools.Editor.Tools
                     Debug.LogWarning("Reverted Prefab Instance!", clonedObject);
                 }
 
-                for (var i = 0; i < numberOfInserts; i++)
+                for (int i = 0; i < numberOfInserts; i++)
                 {
                     InstantiatedFrom instantiatedFrom;
                     var clone = InstantiateClone(clonedObject, out instantiatedFrom);
@@ -43,7 +43,7 @@ namespace UsefulTools.Editor.Tools
             return clones.ToArray();
         }
 
-        static bool IsPrefabFromHierarchy(GameObject prefabInstance)
+        private static bool IsPrefabFromHierarchy(GameObject prefabInstance)
         {
             InstantiatedFrom instantiatedFrom;
             var clone = InstantiateClone(prefabInstance, out instantiatedFrom);
@@ -57,7 +57,7 @@ namespace UsefulTools.Editor.Tools
             return false;
         }
 
-        static void ReparentAndResetTransformOfClone(GameObject clone, Transform parent)
+        private static void ReparentAndResetTransformOfClone(GameObject clone, Transform parent)
         {
             clone.transform.SetParent(parent);
             clone.transform.localPosition = Vector3.zero;
@@ -65,7 +65,7 @@ namespace UsefulTools.Editor.Tools
             clone.transform.localRotation = Quaternion.identity;
         }
 
-        static GameObject InstantiateClone(GameObject clonedObject, out InstantiatedFrom instantiated)
+        private static GameObject InstantiateClone(GameObject clonedObject, out InstantiatedFrom instantiated)
         {
             var clone = PrefabUtility.InstantiatePrefab(clonedObject) as GameObject;
 
@@ -89,19 +89,19 @@ namespace UsefulTools.Editor.Tools
             return clone;
         }
 
-        static void RevertAndReparentPrefabInstance(GameObject prefabInstance, Transform parent)
+        private static void RevertAndReparentPrefabInstance(GameObject prefabInstance, Transform parent)
         {
             RevertPrefabInstance(prefabInstance);
             prefabInstance.transform.SetParent(parent);
         }
 
-        static void RevertPrefabInstance(GameObject prefabInstance)
+        private static void RevertPrefabInstance(GameObject prefabInstance)
         {
             PrefabUtility.ReconnectToLastPrefab(prefabInstance);
             PrefabUtility.RevertPrefabInstance(prefabInstance);
         }
 
-        enum InstantiatedFrom
+        private enum InstantiatedFrom
         {
             NotPrefab = 10,
             PrefabFromAssets = 20,

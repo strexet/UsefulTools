@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Khutor.Scripts.Collections
+namespace UsefulTools.Runtime.DataStructures.Collections
 {
-    public abstract class DrawableDictionary { }
-
     [Serializable]
     public class SerializableDictionary<TKey, TValue> : DrawableDictionary, IDictionary<TKey, TValue>, ISerializationCallbackReceiver
     {
@@ -27,7 +25,9 @@ namespace Khutor.Scripts.Collections
         public void Add(TKey key, TValue value)
         {
             if (_dict == null)
+            {
                 _dict = new Dictionary<TKey, TValue>(Comparer);
+            }
 
             _dict.Add(key, value);
         }
@@ -35,7 +35,9 @@ namespace Khutor.Scripts.Collections
         public bool ContainsKey(TKey key)
         {
             if (_dict == null)
+            {
                 return false;
+            }
 
             return _dict.ContainsKey(key);
         }
@@ -45,7 +47,9 @@ namespace Khutor.Scripts.Collections
             get
             {
                 if (_dict == null)
+                {
                     _dict = new Dictionary<TKey, TValue>(Comparer);
+                }
 
                 return _dict.Keys;
             }
@@ -54,7 +58,9 @@ namespace Khutor.Scripts.Collections
         public bool Remove(TKey key)
         {
             if (_dict == null)
+            {
                 return false;
+            }
 
             return _dict.Remove(key);
         }
@@ -75,7 +81,9 @@ namespace Khutor.Scripts.Collections
             get
             {
                 if (_dict == null)
+                {
                     _dict = new Dictionary<TKey, TValue>(Comparer);
+                }
 
                 return _dict.Values;
             }
@@ -86,14 +94,18 @@ namespace Khutor.Scripts.Collections
             get
             {
                 if (_dict == null)
+                {
                     throw new KeyNotFoundException();
+                }
 
                 return _dict[key];
             }
             set
             {
                 if (_dict == null)
+                {
                     _dict = new Dictionary<TKey, TValue>(Comparer);
+                }
 
                 _dict[key] = value;
             }
@@ -102,13 +114,17 @@ namespace Khutor.Scripts.Collections
         public void Clear()
         {
             if (_dict != null)
+            {
                 _dict.Clear();
+            }
         }
 
         void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
         {
             if (_dict == null)
+            {
                 _dict = new Dictionary<TKey, TValue>(Comparer);
+            }
 
             (_dict as ICollection<KeyValuePair<TKey, TValue>>).Add(item);
         }
@@ -116,7 +132,9 @@ namespace Khutor.Scripts.Collections
         bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item)
         {
             if (_dict == null)
+            {
                 return false;
+            }
 
             return (_dict as ICollection<KeyValuePair<TKey, TValue>>).Contains(item);
         }
@@ -124,7 +142,9 @@ namespace Khutor.Scripts.Collections
         void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
             if (_dict == null)
+            {
                 return;
+            }
 
             (_dict as ICollection<KeyValuePair<TKey, TValue>>).CopyTo(array, arrayIndex);
         }
@@ -132,7 +152,9 @@ namespace Khutor.Scripts.Collections
         bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
         {
             if (_dict == null)
+            {
                 return false;
+            }
 
             return (_dict as ICollection<KeyValuePair<TKey, TValue>>).Remove(item);
         }
@@ -142,7 +164,9 @@ namespace Khutor.Scripts.Collections
         public Dictionary<TKey, TValue>.Enumerator GetEnumerator()
         {
             if (_dict == null)
+            {
                 return default;
+            }
 
             return _dict.GetEnumerator();
         }
@@ -150,7 +174,9 @@ namespace Khutor.Scripts.Collections
         IEnumerator IEnumerable.GetEnumerator()
         {
             if (_dict == null)
+            {
                 return Enumerable.Empty<KeyValuePair<TKey, TValue>>().GetEnumerator();
+            }
 
             return _dict.GetEnumerator();
         }
@@ -158,7 +184,9 @@ namespace Khutor.Scripts.Collections
         IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
         {
             if (_dict == null)
+            {
                 return Enumerable.Empty<KeyValuePair<TKey, TValue>>().GetEnumerator();
+            }
 
             return _dict.GetEnumerator();
         }
@@ -173,16 +201,24 @@ namespace Khutor.Scripts.Collections
             if (_Keys != null && _Values != null)
             {
                 if (_dict == null)
+                {
                     _dict = new Dictionary<TKey, TValue>(_Keys.Length, Comparer);
+                }
                 else
+                {
                     _dict.Clear();
+                }
 
                 for (int i = 0; i < _Keys.Length; i++)
                 {
                     if (i < _Values.Length)
+                    {
                         _dict[_Keys[i]] = _Values[i];
+                    }
                     else
+                    {
                         _dict[_Keys[i]] = default;
+                    }
                 }
             }
 
@@ -202,10 +238,10 @@ namespace Khutor.Scripts.Collections
                 int count = _dict.Count;
                 _Keys = new TKey[count];
                 _Values = new TValue[count];
-                
+
                 int i = 0;
                 var enumerator = _dict.GetEnumerator();
-                
+
                 while (enumerator.MoveNext())
                 {
                     _Keys[i] = enumerator.Current.Key;

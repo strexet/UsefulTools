@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UnlockGames.BA.CameraControl.ExpositionMovement
+namespace UsefulTools.Runtime.Values
 {
     public class SmoothValue
     {

@@ -6,8 +6,8 @@ namespace UsefulTools.Editor.Flat
     [CustomEditor(typeof(AddPolygonCollider))]
     public class AddPolygonColliderEditor : UnityEditor.Editor
     {
-        DestroyMe _destroyMe;
-        AddPolygonCollider _target;
+        private DestroyMe _destroyMe;
+        private AddPolygonCollider _target;
 
         public override void OnInspectorGUI()
         {
@@ -32,14 +32,15 @@ namespace UsefulTools.Editor.Flat
                 new Vector2(0f, edge),
                 new Vector2(edge, -edge / 1.41421f)
             };
+
             polygonCollider.points = points;
 
             _destroyMe = new GameObject().AddComponent<DestroyMe>();
             _destroyMe.ToDestroy = _target;
-            Selection.objects = new[] {_destroyMe.gameObject};
+            Selection.objects = new[] { _destroyMe.gameObject };
         }
 
-        void AddExtraScripts()
+        private void AddExtraScripts()
         {
 //			var raycastFilter = _target.gameObject.GetComponent<ColliderRaycastFilter>();
 //			if (raycastFilter == null)

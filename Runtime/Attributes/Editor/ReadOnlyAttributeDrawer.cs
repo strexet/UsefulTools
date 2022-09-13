@@ -1,8 +1,7 @@
-using Khutor.Scripts.Attributes;
 using UnityEditor;
 using UnityEngine;
 
-namespace Khutor.Editor.Editor.PropertyDrawers
+namespace UsefulTools.Runtime.Attributes.Editor
 {
     [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
     public class ReadOnlyAttributeDrawer : PropertyDrawer
