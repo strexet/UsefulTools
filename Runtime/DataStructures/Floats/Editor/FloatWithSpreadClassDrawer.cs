@@ -1,38 +1,21 @@
-using Sirenix.OdinInspector.Editor;
-using Sirenix.Utilities;
-using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
+using UsefulTools.Editor;
 
 namespace UsefulTools.Runtime.DataStructures.Floats.Editor
 {
-    public class FloatWithSpreadClassDrawer : OdinValueDrawer<FloatWithSpread>
+    [CustomPropertyDrawer(typeof(FloatWithSpread), true)]
+    public class FloatWithSpreadClassDrawer : PropertyDrawer
     {
-        protected override void DrawPropertyLayout(GUIContent label)
+        private const string ValuePropertyName = nameof(FloatWithSpread.value);
+        private const string SpreadPropertyName = nameof(FloatWithSpread.spread);
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var smartValue = ValueEntry.SmartValue;
-            float value = smartValue.value;
-            float spread = smartValue.spread;
+            var valueProp = property.FindPropertyRelative(ValuePropertyName);
+            var spreadProp = property.FindPropertyRelative(SpreadPropertyName);
 
-            var rect = EditorGUILayout.GetControlRect();
-
-            if (label != null)
-            {
-                rect = EditorGUI.PrefixLabel(rect, label);
-            }
-
-            GUIHelper.PushLabelWidth(66f);
-            value = SirenixEditorFields.FloatField(rect.AlignLeft(rect.width * 0.5f), "Value", value);
-            GUIHelper.PopLabelWidth();
-
-            GUIHelper.PushLabelWidth(74f);
-            spread = SirenixEditorFields.FloatField(rect.AlignRight(rect.width * 0.5f), "Spread", spread);
-            GUIHelper.PopLabelWidth();
-
-            smartValue.value = value;
-            smartValue.spread = spread;
-
-            ValueEntry.SmartValue = smartValue;
+            EditorUIHelper.DrawPropertiesInLine(position, valueProp, spreadProp);
         }
     }
 }

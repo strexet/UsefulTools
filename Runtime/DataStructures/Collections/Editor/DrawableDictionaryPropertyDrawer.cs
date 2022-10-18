@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
+using UsefulTools.Editor;
 
 namespace UsefulTools.Runtime.DataStructures.Collections.Editor
 {
@@ -24,7 +25,7 @@ namespace UsefulTools.Runtime.DataStructures.Collections.Editor
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             bool expanded = property.isExpanded;
-            var rect = GetNextRect(ref position);
+            var rect = EditorUIHelper.GetNextRect(ref position);
             property.isExpanded = EditorGUI.Foldout(rect, property.isExpanded, label);
 
             if (expanded)
@@ -43,7 +44,7 @@ namespace UsefulTools.Runtime.DataStructures.Collections.Editor
 
                 for (int i = 0; i < count; i++)
                 {
-                    rect = GetNextRect(ref position);
+                    rect = EditorUIHelper.GetNextRect(ref position);
 
                     float keyWidth = EditorGUIUtility.labelWidth;
                     float valueWidth = rect.width - keyWidth;
@@ -60,7 +61,7 @@ namespace UsefulTools.Runtime.DataStructures.Collections.Editor
 
                 EditorGUI.indentLevel = lvl;
 
-                rect = GetNextRect(ref position);
+                rect = EditorUIHelper.GetNextRect(ref position);
                 var plusButtonRect = new Rect(rect.xMax - 60f, rect.yMin, 30f, EditorGUIUtility.singleLineHeight);
                 var minusButtonRect = new Rect(rect.xMax - 30f, rect.yMin, 30f, EditorGUIUtility.singleLineHeight);
 
@@ -83,14 +84,6 @@ namespace UsefulTools.Runtime.DataStructures.Collections.Editor
 
         protected virtual void DrawValue(Rect area, SerializedProperty valueProp) =>
             EditorGUI.PropertyField(area, valueProp, GUIContent.none, false);
-
-        private Rect GetNextRect(ref Rect position)
-        {
-            var nextRect = new Rect(position.xMin, position.yMin, position.width, EditorGUIUtility.singleLineHeight);
-            float height = EditorGUIUtility.singleLineHeight + 1f;
-            position = new Rect(position.xMin, position.yMin + height, position.width, position.height = height);
-            return nextRect;
-        }
 
         private static void AddKeyElement(SerializedProperty keysProp)
         {

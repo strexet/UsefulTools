@@ -1,38 +1,21 @@
-using Sirenix.OdinInspector.Editor;
-using Sirenix.Utilities;
-using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
+using UsefulTools.Editor;
 
 namespace UsefulTools.Runtime.DataStructures.Floats.Editor
 {
-    public class FloatMinMaxClassDrawer : OdinValueDrawer<FloatMinMax>
+    [CustomPropertyDrawer(typeof(FloatMinMax), true)]
+    public class FloatMinMaxClassDrawer : PropertyDrawer
     {
-        protected override void DrawPropertyLayout(GUIContent label)
+        private const string MinPropertyName = nameof(FloatMinMax.min);
+        private const string MaxPropertyName = nameof(FloatMinMax.max);
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var smartValue = ValueEntry.SmartValue;
-            float min = smartValue.min;
-            float max = smartValue.max;
+            var minProp = property.FindPropertyRelative(MinPropertyName);
+            var maxProp = property.FindPropertyRelative(MaxPropertyName);
 
-            var rect = EditorGUILayout.GetControlRect();
-
-            if (label != null)
-            {
-                rect = EditorGUI.PrefixLabel(rect, label);
-            }
-
-            GUIHelper.PushLabelWidth(40f);
-            min = SirenixEditorFields.FloatField(rect.AlignLeft(rect.width * 0.5f), "Min", min);
-            GUIHelper.PopLabelWidth();
-
-            GUIHelper.PushLabelWidth(43f);
-            max = SirenixEditorFields.FloatField(rect.AlignRight(rect.width * 0.5f), "Max", max);
-            GUIHelper.PopLabelWidth();
-
-            smartValue.min = min;
-            smartValue.max = max;
-
-            ValueEntry.SmartValue = smartValue;
+            EditorUIHelper.DrawPropertiesInLine(position, minProp, maxProp);
         }
     }
 }
