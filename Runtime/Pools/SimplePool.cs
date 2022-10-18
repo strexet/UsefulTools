@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UsefulTools.Runtime
+namespace UsefulTools.Runtime.Pools
 {
     public class Pool
     {
