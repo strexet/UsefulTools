@@ -48,7 +48,7 @@ namespace UsefulTools.Runtime.Values
 
                 Value = Mathf.Lerp(startValue, _nextValue, timer * durationInversed);
 
-                await UniTask.Yield();
+                await UniTask.NextFrame();
             }
 
             IsChanging = false;
