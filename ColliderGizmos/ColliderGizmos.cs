@@ -226,10 +226,6 @@ namespace UsefulTools.ColliderGizmos
                     Gizmos.DrawSphere(withCollider.position, CenterMarkerRadius);
             }
 
-            Gizmos.color = new Color(WireColor.r, WireColor.g, WireColor.b, WireColor.a * Alpha);
-
-            Gizmos.color = new Color(FillColor.r, FillColor.g, FillColor.b, FillColor.a * Alpha);
-
             if (!DrawWire && !DrawFill)
                 return;
 
