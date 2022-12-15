@@ -7,7 +7,10 @@ using UnityEngine;
 namespace UsefulTools.Runtime.DataStructures.Collections
 {
     [Serializable]
-    public class SerializableDictionary<TKey, TValue> : DrawableDictionary, IDictionary<TKey, TValue>, ISerializationCallbackReceiver
+    public class SerializableDictionary<TKey, TValue> : DrawableDictionary, 
+        IDictionary<TKey, TValue>, 
+        IReadOnlyDictionary<TKey, TValue>, 
+        ISerializationCallbackReceiver
     {
         [NonSerialized] private Dictionary<TKey, TValue> _dict;
         [NonSerialized] private IEqualityComparer<TKey> _comparer;
@@ -55,6 +58,8 @@ namespace UsefulTools.Runtime.DataStructures.Collections
             }
         }
 
+        IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values => Values;
+
         public bool Remove(TKey key)
         {
             if (_dict == null)
@@ -75,6 +80,8 @@ namespace UsefulTools.Runtime.DataStructures.Collections
 
             return _dict.TryGetValue(key, out value);
         }
+
+        IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys => Keys;
 
         public ICollection<TValue> Values
         {
