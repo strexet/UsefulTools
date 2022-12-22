@@ -1,10 +1,10 @@
-using System.Collections.Generic;
-
 namespace UsefulTools.Runtime.DataStructures.InterfaceImplementations
 {
-    public interface IImplementationList<T>
+    public interface IImplementationList<in T>
     {
-        List<T> ToImplementationList();
-        DisposableList<T> ToImplementationDisposableList();
+        int Count {get;}
+
+        void Add(T item);
+        bool Contains(T item);
     }
 }

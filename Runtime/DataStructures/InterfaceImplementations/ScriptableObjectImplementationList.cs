@@ -6,13 +6,41 @@ using UnityEngine.Pool;
 namespace UsefulTools.Runtime.DataStructures.InterfaceImplementations
 {
     [Serializable]
-    public class ScriptableObjectImplementationList<T> : IDisposable, IImplementationList<T> where T : class
+    public class ScriptableObjectImplementationList<T> : IDisposable, IConvertableImplementationList<T> where T : class
     {
         [SerializeField] private List<ScriptableObjectImplementation<T>> _list;
+
+        public int Count => _list.Count;
 
         public ScriptableObjectImplementationList()
         {
             _list = ListPool<ScriptableObjectImplementation<T>>.Get();
+        }
+
+        public void Add(T item)
+        {
+            if (item is ScriptableObjectImplementation<T> implementation)
+            {
+                _list.Add(implementation);
+            }
+            else
+            {
+                Debug.LogError(
+                    $"Trying to add not implementation item ({item.GetType()}) in {nameof(ScriptableObjectImplementation<T>)}<{typeof(T)}>");
+            }
+        }
+
+        public bool Contains(T item)
+        {
+            foreach (var implementation in _list)
+            {
+                if (item.Equals(implementation.Implementation))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public List<T> ToImplementationList()
@@ -30,16 +58,39 @@ namespace UsefulTools.Runtime.DataStructures.InterfaceImplementations
             return list;
         }
 
-        public DisposableList<T> ToImplementationDisposableList()
+        public List<TParent> ToParentImplementationList<TParent>()
         {
-            var disposableList = new DisposableList<T>();
+            var list = ListPool<TParent>.Get();
 
             foreach (var item in _list)
             {
-                disposableList.List.Add(item.Implementation);
+                if (item is TParent itemAsParent)
+                {
+                    list.Add(itemAsParent);
+                }
+                else
+                {
+                    Debug.LogError($"Not parent item ({item.GetType()}) in {nameof(ScriptableObjectImplementation<T>)}<{typeof(T)}>");
+                    return list;
+                }
             }
 
-            return disposableList;
+            return list;
+        }
+
+        public List<TChild> ToChildImplementationList<TChild>() where TChild : T
+        {
+            var list = ListPool<TChild>.Get();
+
+            foreach (var item in _list)
+            {
+                if (item != null)
+                {
+                    list.Add((TChild)item.Implementation);
+                }
+            }
+
+            return list;
         }
 
         public void Dispose()
