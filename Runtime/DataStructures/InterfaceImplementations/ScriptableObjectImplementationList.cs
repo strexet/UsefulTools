@@ -6,7 +6,7 @@ using UnityEngine.Pool;
 namespace UsefulTools.Runtime.DataStructures.InterfaceImplementations
 {
     [Serializable]
-    public class ScriptableObjectImplementationList<T> : IDisposable where T : class
+    public class ScriptableObjectImplementationList<T> : IDisposable, IImplementationList<T> where T : class
     {
         [SerializeField] private List<ScriptableObjectImplementation<T>> _list;
 
@@ -15,20 +15,22 @@ namespace UsefulTools.Runtime.DataStructures.InterfaceImplementations
             _list = ListPool<ScriptableObjectImplementation<T>>.Get();
         }
 
-        [Obsolete]
-        public List<T> ToList()
+        public List<T> ToImplementationList()
         {
             var list = ListPool<T>.Get();
 
             foreach (var item in _list)
             {
-                list.Add(item.Implementation);
+                if (item != null)
+                {
+                    list.Add(item.Implementation);
+                }
             }
 
             return list;
         }
 
-        public DisposableList<T> ToDisposableList()
+        public DisposableList<T> ToImplementationDisposableList()
         {
             var disposableList = new DisposableList<T>();
 

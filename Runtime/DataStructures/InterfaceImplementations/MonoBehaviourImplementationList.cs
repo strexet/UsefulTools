@@ -6,7 +6,7 @@ using UnityEngine.Pool;
 namespace UsefulTools.Runtime.DataStructures.InterfaceImplementations
 {
     [Serializable]
-    public class MonoBehaviourImplementationList<T> : IDisposable where T : class
+    public class MonoBehaviourImplementationList<T> : IDisposable, IImplementationList<T> where T : class
     {
         [SerializeField] private List<MonoBehaviourImplementation<T>> _list;
 
@@ -15,8 +15,7 @@ namespace UsefulTools.Runtime.DataStructures.InterfaceImplementations
             _list = ListPool<MonoBehaviourImplementation<T>>.Get();
         }
 
-        [Obsolete]
-        public List<T> ToList()
+        public List<T> ToImplementationList()
         {
             var list = ListPool<T>.Get();
 
@@ -28,7 +27,7 @@ namespace UsefulTools.Runtime.DataStructures.InterfaceImplementations
             return list;
         }
 
-        public DisposableList<T> ToDisposableList()
+        public DisposableList<T> ToImplementationDisposableList()
         {
             var disposableList = new DisposableList<T>();
 
