@@ -64,13 +64,13 @@ namespace UsefulTools.Runtime.DataStructures.InterfaceImplementations
 
             foreach (var item in _list)
             {
-                if (item is TParent itemAsParent)
+                if (item != null && item.Implementation is TParent asParent)
                 {
-                    list.Add(itemAsParent);
+                    list.Add(asParent);
                 }
                 else
                 {
-                    Debug.LogError($"Not parent item ({item.GetType()}) in {nameof(ScriptableObjectImplementation<T>)}<{typeof(T)}>");
+                    Debug.LogError($"Not parent item ({item.GetType()}) of {nameof(ScriptableObjectImplementation<T>)}<{typeof(T)}>");
                     return list;
                 }
             }
@@ -84,9 +84,14 @@ namespace UsefulTools.Runtime.DataStructures.InterfaceImplementations
 
             foreach (var item in _list)
             {
-                if (item != null)
+                if (item != null && item.Implementation is TChild asChild)
                 {
-                    list.Add((TChild)item.Implementation);
+                    list.Add(asChild);
+                }
+                else
+                {
+                    Debug.LogError($"Not child item ({item.GetType()}) of {nameof(ScriptableObjectImplementation<T>)}<{typeof(T)}>");
+                    return list;
                 }
             }
 
