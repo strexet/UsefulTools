@@ -23,9 +23,9 @@ namespace UsefulTools.Editor.Tools
         private string newName = "NewName";
         private int numberOfInserts;
         private List<GameObject> objectsToInsertRemove;
-        private readonly EditorList<GameObject> objectsToInsertRemoveEditorList = new(1);
+        private readonly EditorList<GameObject> objectsToInsertRemoveEditorList = new EditorList<GameObject>(1);
         private List<Transform> optionalParents;
-        private readonly EditorList<Transform> optionalParentsEditorList = new(1);
+        private readonly EditorList<Transform> optionalParentsEditorList = new EditorList<Transform>(1);
         private string prefix = "";
         private string replaceFor = "ReplaceFor";
         private bool saveCurrentSelection;

@@ -10,8 +10,8 @@ namespace UsefulTools.Editor.Flat
         private DestroyMe _destroyMe;
         private AddPolygonCollider _target;
 
-        private readonly List<Vector2> points = new();
-        private readonly List<Vector2> simplifiedPoints = new();
+        private readonly List<Vector2> points = new List<Vector2>();
+        private readonly List<Vector2> simplifiedPoints = new List<Vector2>();
 
         private SpriteRenderer _spriteRenderer;
 

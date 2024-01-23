@@ -15,9 +15,9 @@ namespace UsefulTools.ColliderGizmos
         public Color CustomCenterColor;
 
         public float Alpha = 1.0f;
-        public Color WireColor = new(1f, 1f, 1f, 0.1f);
-        public Color FillColor = new(0.4f, 0.4f, 0.8f, 0.2f);
-        public Color CenterColor = new(1f, 1f, 1f, 0.1f);
+        public Color WireColor = new Color(1f, 1f, 1f, 0.1f);
+        public Color FillColor = new Color(0.4f, 0.4f, 0.8f, 0.2f);
+        public Color CenterColor = new Color(1f, 1f, 1f, 0.1f);
 
         public bool DrawFill = true;
         public bool DrawWire = true;
@@ -36,7 +36,7 @@ namespace UsefulTools.ColliderGizmos
         private List<BoxCollider> _boxColliders;
         private List<SphereCollider> _sphereColliders;
 
-        private readonly HashSet<Transform> _withColliders = new();
+        private readonly HashSet<Transform> _withColliders = new HashSet<Transform>();
 
         private Color _wireGizmoColor;
         private Color _fillGizmoColor;
