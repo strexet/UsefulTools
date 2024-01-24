@@ -37,6 +37,7 @@ namespace UsefulTools.Editor.Tools
         private int logLineLength = 120;
         private string hierarchyPath = "";
         private string childrenCounterNumberFormat = "";
+        private Vector3 addToPosition = Vector3.zero;
 
         [MenuItem("Tools/UsefulTools/Tools Window", false, 0)]
         private static void Init()
@@ -62,6 +63,7 @@ namespace UsefulTools.Editor.Tools
             DrawSelectGameObjectsMenu();
             DrawPackObjectsMenu();
             DrawSelectObjectsWithCommonMaterialMenu();
+            DrawTransformManipulationsMenu();
 
             GUILayout.EndScrollView();
             GUILayout.EndVertical();
@@ -133,6 +135,96 @@ namespace UsefulTools.Editor.Tools
             }
 
             GUILayout.Space(bigSpacePixelsCount);
+        }
+        
+        private void DrawTransformManipulationsMenu()
+        {
+            GUILayout.Label("Update Transform", headerTextStyle);
+            
+            GUILayout.BeginHorizontal();
+
+            var addToPositionLabel = new GUIContent("Add to current position");
+            addToPosition = EditorGUILayout.Vector3Field(addToPositionLabel, addToPosition);
+            
+            GUILayout.EndHorizontal();
+            
+            if (GUILayout.Button("Add to position"))
+            {
+                AddToPositionForSelectedObjects(addToPosition);
+            }
+            
+            GUILayout.Space(smallSpacePixelsCount);
+            
+            GUILayout.BeginHorizontal();
+
+            var addCounterLabel = new GUIContent("Add counter to children");
+            childrenCounterNumberFormat = EditorGUILayout.TextField(addCounterLabel, childrenCounterNumberFormat);
+            
+            GUILayout.EndHorizontal();
+            
+            if (GUILayout.Button("Add counter to children"))
+            {
+                AddCounterToNameForChildrenOfSelectedObjects(childrenCounterNumberFormat);
+            }
+
+            GUILayout.Space(bigSpacePixelsCount);
+        }
+        
+        private void AddToPositionForSelectedObjects(Vector3 addToPosition)
+        {
+            var selected = Selection.transforms;
+
+            if (selected.Length == 0)
+            {
+                return;
+            }
+
+            Undo.RecordObjects(selected, "Move Objects");
+
+            foreach (var selectedTransform in selected)
+            {
+                var currentPosition = selectedTransform.position;
+                var newPosition = currentPosition + addToPosition;
+                selectedTransform.position = newPosition;
+            }
+        }
+        
+        private void AddCounterToNameForChildrenOfSelectedObjects(string numberFormat)
+        {
+            var selected = Selection.transforms;
+
+            if (selected.Length == 0)
+            {
+                Debug.LogError($"[DEBUG]<color=red>{nameof(UsefulToolsWindow)}.{nameof(AddToName)}></color> "
+                    + $"No selection");
+                return;
+            }
+            
+            foreach (var selectedTransform in selected)
+            {
+                int additionCounter = 0;
+                
+                Undo.RecordObjects(selected, "Add counter to object's Name");
+
+                for (var i = 0; i < selectedTransform.childCount; i++)
+                {
+                    var child = selectedTransform.GetChild(i);
+                    
+                    string currentName = child.name;
+                    string additionCounterString = string.IsNullOrEmpty(numberFormat) 
+                        ? additionCounter.ToString() 
+                        : additionCounter.ToString(numberFormat);
+
+                    string newName = $"{currentName}{additionCounterString}";
+
+                    Debug.LogError($"[DEBUG]<color=yellow>{nameof(UsefulToolsWindow)}.{nameof(AddToName)}></color> "
+                        + $"Set name of \"{child.name}\" to \"{newName}\"", child);
+                        
+                    child.name = newName;
+                    
+                    additionCounter++;
+                }
+            }
         }
 
         private void DrawRenameSelectedObjectsMenu()
