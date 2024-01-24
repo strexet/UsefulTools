@@ -10,7 +10,9 @@ namespace UsefulTools.Editor.Tools
     public class UsefulToolsWindow : EditorWindow
     {
         private static readonly string[] AddToNameOptions = new string[] { "Prefix", "Suffix", "Counter" };
+        private static readonly string[] TagComponentOptions = new string[] { "GE2", "Lua" };
         private string additionToName;
+        private string additionToTag;
         private readonly float bigSpacePixelsCount = 20f;
         private string byComponentName = "";
         private string byObjectName = "";
@@ -20,7 +22,9 @@ namespace UsefulTools.Editor.Tools
         private string insertionSuffixForName = "";
         private bool isActiveInHierarchy;
         private string namePart = "NamePart";
+        private string tagPart = "NamePart";
         private string newName = "NewName";
+        private string setTag = "NewName";
         private int numberOfInserts;
         private List<GameObject> objectsToInsertRemove;
         private readonly EditorList<GameObject> objectsToInsertRemoveEditorList = new EditorList<GameObject>(1);
@@ -28,9 +32,12 @@ namespace UsefulTools.Editor.Tools
         private readonly EditorList<Transform> optionalParentsEditorList = new EditorList<Transform>(1);
         private string prefix = "";
         private string replaceNamePartFor = "ReplaceFor";
+        private string replaceTagPartFor = "ReplaceFor";
         private bool saveCurrentSelection;
         private Vector2 scrollPosition;
         private int selectedNameAdditionIndex = 0;
+        private int selectedTagAdditionIndex = 0;
+        private int selectedTagComponentIndex = 0;
         private bool selectInserted = true;
         private readonly float smallSpacePixelsCount = 5f;
         private string suffix = "";
@@ -38,6 +45,7 @@ namespace UsefulTools.Editor.Tools
         private string hierarchyPath = "";
         private string childrenCounterNumberFormat = "";
         private Vector3 addToPosition = Vector3.zero;
+        private ITagHelper tagHelper = new PlayStudiosTagHelper();
 
         [MenuItem("Tools/UsefulTools/Tools Window", false, 0)]
         private static void Init()
@@ -60,6 +68,7 @@ namespace UsefulTools.Editor.Tools
             DrawSelectChildrenParenMenu();
             DrawGetHierarchyPathOfSelectedObject();
             DrawRenameSelectedObjectsMenu();
+            DrawEditTagOfSelectedObjectsMenu();
             DrawSelectGameObjectsMenu();
             DrawPackObjectsMenu();
             DrawSelectObjectsWithCommonMaterialMenu();
@@ -357,6 +366,25 @@ namespace UsefulTools.Editor.Tools
             foreach (var go in selectedGameObjects)
                 go.name = go.name.Replace(part, replacement);
         }
+        
+        private void ReplaceTagPart(string part, string replacement, string selectedComponent)
+        {
+            var selectedGameObjects = Selection.gameObjects;
+
+            if (selectedGameObjects.Length == 0)
+            {
+                return;
+            }
+
+            Undo.RecordObjects(selectedGameObjects, "Replace Part Of The Name");
+
+            foreach (var selectedObject in selectedGameObjects)
+            {
+                string currentTag = tagHelper.GetTagStringFromObject(selectedObject, selectedComponent);
+                string newTag = currentTag.Replace(part, replacement);
+                tagHelper.SetTagStringForObject(newTag, selectedObject, selectedComponent);
+            }
+        }
 
         private static void ReplaceNamePartForAsset(string part, string replacement)
         {
@@ -626,6 +654,23 @@ namespace UsefulTools.Editor.Tools
             }
 
             Selection.objects = properObjects.ToArray();
+        }
+        
+        private void SetTagForSelectedObjects(string newTag, string selectedComponent)
+        {
+            var selected = Selection.gameObjects;
+
+            if (selected.Length == 0)
+            {
+                return;
+            }
+
+            Undo.RecordObjects(selected, "Set Tag for Objects");
+
+            foreach (var selectedObject in selected)
+            {
+                tagHelper.SetTagStringForObject(newTag, selectedObject, selectedComponent);
+            }
         }
 
         private void RenameSelectedObjects(string newName)
