@@ -9,7 +9,7 @@ namespace UsefulTools.Editor.Tools
 {
     public class UsefulToolsWindow : EditorWindow
     {
-        private static readonly string[] Options = { "Prefix", "Suffix" };
+        private static readonly string[] AddToNameOptions = new string[] { "Prefix", "Suffix", "Counter" };
         private string additionToName;
         private readonly float bigSpacePixelsCount = 20f;
         private string byComponentName = "";
@@ -27,15 +27,16 @@ namespace UsefulTools.Editor.Tools
         private List<Transform> optionalParents;
         private readonly EditorList<Transform> optionalParentsEditorList = new EditorList<Transform>(1);
         private string prefix = "";
-        private string replaceFor = "ReplaceFor";
+        private string replaceNamePartFor = "ReplaceFor";
         private bool saveCurrentSelection;
         private Vector2 scrollPosition;
-        private int selectedAddition = 2;
+        private int selectedNameAdditionIndex = 0;
         private bool selectInserted = true;
         private readonly float smallSpacePixelsCount = 5f;
         private string suffix = "";
         private int logLineLength = 120;
         private string hierarchyPath = "";
+        private string childrenCounterNumberFormat = "";
 
         [MenuItem("Tools/UsefulTools/Tools Window", false, 0)]
         private static void Init()
@@ -148,25 +149,25 @@ namespace UsefulTools.Editor.Tools
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Add to name...");
-            selectedAddition =
-                GUILayout.SelectionGrid(selectedAddition, Options, Options.Length, EditorStyles.radioButton);
+            selectedNameAdditionIndex = GUILayout.SelectionGrid(selectedNameAdditionIndex, AddToNameOptions, AddToNameOptions.Length, EditorStyles.radioButton);
 
             GUILayout.EndHorizontal();
             additionToName = EditorGUILayout.TextField(additionToName);
 
             if (GUILayout.Button("Add to name..."))
             {
-                AddToName(selectedAddition, additionToName);
+                AddToName(selectedNameAdditionIndex, additionToName);
             }
 
             GUILayout.Space(smallSpacePixelsCount);
 
             GUILayout.Label("Replace part of name...", headerTextStyle);
             namePart = EditorGUILayout.TextField("Name Part", namePart);
-            replaceFor = EditorGUILayout.TextField("Replace For", replaceFor);
-            if (GUILayout.Button("Replace"))
+            replaceNamePartFor = EditorGUILayout.TextField("Replace For", replaceNamePartFor);
+            
+            if (GUILayout.Button("Replace name part"))
             {
-                ReplaceNamePart(namePart, replaceFor);
+                ReplaceNamePart(namePart, replaceNamePartFor);
             }
 
             GUILayout.Space(bigSpacePixelsCount);
@@ -313,13 +314,37 @@ namespace UsefulTools.Editor.Tools
                     suffix = additionToName;
                     prefix = string.Empty;
                     break;
+                
+                case 2:
+                    int additionCounter = 0;
+
+                    var commonParent = selected[0].transform.parent;
+                    
+                    foreach (var selectedObject in selected)
+                    {
+                        string currentName = selectedObject.name;
+                        string additionCounterString = string.IsNullOrEmpty(additionToName) 
+                            ? additionCounter.ToString() 
+                            : additionCounter.ToString(additionToName);
+
+                        string newName = $"{currentName}{additionCounterString}";
+
+                        selectedObject.name = newName;
+                        
+                        additionCounter++;
+                    }
+                    
+                    return;
 
                 default:
                     return;
             }
 
             foreach (var selectedObject in selected)
-                selectedObject.name = string.Format("{0}{1}{2}", prefix, selectedObject.name, suffix);
+            {
+                string currentName = selectedObject.name;
+                selectedObject.name = $"{prefix}{currentName}{suffix}";
+            }
         }
 
         private void SelectObjectsByMaterial(Material mateial, bool activeInHierarchy)
