@@ -10,6 +10,7 @@ namespace UsefulTools.Editor.Tools
     public class UsefulToolsWindow : EditorWindow
     {
         private static readonly string[] AddToNameOptions = new string[] { "Prefix", "Suffix", "Counter" };
+        private static readonly string[] AddToTagOptions = new string[] { "Prefix", "Suffix" };
         private static readonly string[] TagComponentOptions = new string[] { "GE2", "Lua" };
         private string additionToName;
         private string additionToTag;
@@ -204,8 +205,8 @@ namespace UsefulTools.Editor.Tools
 
             if (selected.Length == 0)
             {
-                Debug.LogError($"[DEBUG]<color=red>{nameof(UsefulToolsWindow)}.{nameof(AddToName)}></color> "
-                    + $"No selection");
+                Debug.LogError($"[ERROR]<color=red>{nameof(UsefulToolsWindow)}.{nameof(AddToName)}></color> "
+                    + "No selection");
                 return;
             }
             
@@ -225,12 +226,7 @@ namespace UsefulTools.Editor.Tools
                         : additionCounter.ToString(numberFormat);
 
                     string newName = $"{currentName}{additionCounterString}";
-
-                    Debug.LogError($"[DEBUG]<color=yellow>{nameof(UsefulToolsWindow)}.{nameof(AddToName)}></color> "
-                        + $"Set name of \"{child.name}\" to \"{newName}\"", child);
-                        
                     child.name = newName;
-                    
                     additionCounter++;
                 }
             }
@@ -269,6 +265,49 @@ namespace UsefulTools.Editor.Tools
             if (GUILayout.Button("Replace name part"))
             {
                 ReplaceNamePart(namePart, replaceNamePartFor);
+            }
+
+            GUILayout.Space(bigSpacePixelsCount);
+        }
+        
+        private void DrawEditTagOfSelectedObjectsMenu()
+        {
+            GUILayout.Label("Set Tag for Selected Objects", headerTextStyle);
+            
+            selectedTagComponentIndex = GUILayout.SelectionGrid(selectedTagComponentIndex, TagComponentOptions, TagComponentOptions.Length, EditorStyles.radioButton);
+            string selectedTagComponent = TagComponentOptions[selectedTagComponentIndex];
+            GUILayout.Space(smallSpacePixelsCount);
+            
+            GUILayout.Label("New Tag");
+            setTag = EditorGUILayout.TextField(setTag);
+            if (GUILayout.Button("Set Tag"))
+            {
+                SetTagForSelectedObjects(setTag, selectedTagComponent);
+            }
+
+            GUILayout.Space(smallSpacePixelsCount);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Add to tag...");
+            selectedTagAdditionIndex = GUILayout.SelectionGrid(selectedTagAdditionIndex, AddToTagOptions, AddToTagOptions.Length, EditorStyles.radioButton);
+
+            GUILayout.EndHorizontal();
+            additionToTag = EditorGUILayout.TextField(additionToTag);
+
+            if (GUILayout.Button("Add to tag..."))
+            {
+                AddToTag(selectedTagAdditionIndex, additionToTag, selectedTagComponent);
+            }
+
+            GUILayout.Space(smallSpacePixelsCount);
+
+            GUILayout.Label("Replace part of tag...", headerTextStyle);
+            tagPart = EditorGUILayout.TextField("Tag Part", tagPart);
+            replaceTagPartFor = EditorGUILayout.TextField("Replace For", replaceTagPartFor);
+            
+            if (GUILayout.Button("Replace tag part"))
+            {
+                ReplaceTagPart(tagPart, replaceNamePartFor, selectedTagComponent);
             }
 
             GUILayout.Space(bigSpacePixelsCount);
@@ -376,7 +415,7 @@ namespace UsefulTools.Editor.Tools
                 return;
             }
 
-            Undo.RecordObjects(selectedGameObjects, "Replace Part Of The Name");
+            Undo.RecordObjects(selectedGameObjects, "Replace Part Of The Tag");
 
             foreach (var selectedObject in selectedGameObjects)
             {
@@ -409,6 +448,38 @@ namespace UsefulTools.Editor.Tools
                     Debug.Log($"Old File Name = \"{fileName}\"");
                     Debug.Log($"New File Name = \"{newFileName}\"");
                 }
+            }
+        }
+        
+        private void AddToTag(int indexOfSelectedAddition, string additionToTag, string selectedComponent)
+        {
+            var selected = Selection.gameObjects;
+
+            if (selected.Length == 0)
+            {
+                return;
+            }
+
+            Undo.RecordObjects(selected, "Add to object's Tag");
+
+            switch (indexOfSelectedAddition)
+            {
+                case 0:
+                    prefix = additionToTag;
+                    suffix = string.Empty;
+                    break;
+
+                case 1:
+                    suffix = additionToTag;
+                    prefix = string.Empty;
+                    break;
+            }
+
+            foreach (var selectedObject in selected)
+            {
+                string currentTag = tagHelper.GetTagStringFromObject(selectedObject, selectedComponent);
+                string newTag = $"{prefix}{currentTag}{suffix}";
+                tagHelper.SetTagStringForObject(newTag, selectedObject, selectedComponent);
             }
         }
 
