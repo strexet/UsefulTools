@@ -1,12 +1,39 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace UsefulTools.Editor.Tools
 {
+    [Serializable]
+    public class TransformData
+    {
+        public Vector3 LocalPosition = Vector3.zero;
+        public Vector3 LocalEulerRotation = Vector3.zero;
+        public Vector3 LocalScale = Vector3.one;
+
+        // Unity requires a default constructor for serialization
+        public TransformData() { }
+
+        public TransformData(Transform transform)
+        {
+            LocalPosition = transform.localPosition;
+            LocalEulerRotation = transform.localEulerAngles;
+            LocalScale = transform.localScale;
+        }
+
+        public void ApplyTo(Transform transform)
+        {
+            transform.localPosition = LocalPosition;
+            transform.localEulerAngles = LocalEulerRotation ;
+            transform.localScale = LocalScale;
+        }
+    }
+    
     public class UsefulToolsWindow : EditorWindow
     {
         private static readonly string[] AddToNameOptions = new string[] { "Prefix", "Suffix", "Counter" };
@@ -46,6 +73,11 @@ namespace UsefulTools.Editor.Tools
         private string hierarchyPath = "";
         private string childrenCounterNumberFormat = "";
         private Vector3 addToPosition = Vector3.zero;
+        private List<Transform> copyFromTransforms;
+        private EditorList<Transform> copyFromTransformsEditorList = new EditorList<Transform>(0);
+        private List<Transform> pasteToTransforms;
+        private EditorList<Transform> pasteToTransformsEditorList = new EditorList<Transform>(0);
+        
         private ITagHelper tagHelper = new PlayStudiosTagHelper();
 
         [MenuItem("Tools/UsefulTools/Tools Window", false, 0)]
@@ -167,7 +199,7 @@ namespace UsefulTools.Editor.Tools
             
             GUILayout.BeginHorizontal();
 
-            var addCounterLabel = new GUIContent("Add counter to children");
+            var addCounterLabel = new GUIContent("Counter Number Format","Counter Number Format: e.g. #0,000.00; live empty if simple counter is enough.");
             childrenCounterNumberFormat = EditorGUILayout.TextField(addCounterLabel, childrenCounterNumberFormat);
             
             GUILayout.EndHorizontal();
@@ -176,7 +208,47 @@ namespace UsefulTools.Editor.Tools
             {
                 AddCounterToNameForChildrenOfSelectedObjects(childrenCounterNumberFormat);
             }
-
+            
+            GUILayout.Space(smallSpacePixelsCount);
+            
+            GUILayout.Label("Copy/Paste transforms", headerTextStyle);
+           
+            GUILayout.Label("Copy From Transforms");
+            copyFromTransformsEditorList.UpdateAndDraw(ref copyFromTransforms);
+            
+            if (GUILayout.Button("Add Selection to Copy List"))
+            {
+                AddSelectedToTransformsList(ref copyFromTransforms);
+                copyFromTransformsEditorList.UpdateAndDraw(ref copyFromTransforms);
+            }
+            
+            GUILayout.Space(smallSpacePixelsCount);
+            
+            GUILayout.Label("Paste To Transforms");
+            pasteToTransformsEditorList.UpdateAndDraw(ref pasteToTransforms);
+            
+            if (GUILayout.Button("Add Selection to Paste List"))
+            {
+                AddSelectedToTransformsList(ref pasteToTransforms);
+                pasteToTransformsEditorList.UpdateAndDraw(ref pasteToTransforms);
+            }
+            
+            GUILayout.Space(smallSpacePixelsCount);
+            
+            if (GUILayout.Button("Copy & Paste Transforms"))
+            {
+                CopyPasteTransforms(copyFromTransforms.ToArray(), pasteToTransforms.ToArray());
+            }
+            
+            if (GUILayout.Button("Clear Copy & Paste Lists"))
+            {
+                copyFromTransforms.Clear();
+                pasteToTransforms.Clear();
+                
+                copyFromTransformsEditorList.UpdateAndDraw(ref copyFromTransforms);
+                pasteToTransformsEditorList.UpdateAndDraw(ref pasteToTransforms);
+            }
+            
             GUILayout.Space(bigSpacePixelsCount);
         }
         
@@ -229,6 +301,101 @@ namespace UsefulTools.Editor.Tools
                     child.name = newName;
                     additionCounter++;
                 }
+            }
+        }
+
+        private void AddSelectedToTransformsList(ref List<Transform> transformsList)
+        {
+            var selectedTransforms = Selection.transforms;
+
+            if (selectedTransforms.Length == 0)
+            {
+                return;
+            }
+
+            bool haveSameParent = true;
+            var commonParent = selectedTransforms[0].parent;
+            
+            foreach (var selectedTransform in selectedTransforms)
+            {
+                if (commonParent != selectedTransform.parent)
+                {
+                    haveSameParent = false;
+                    break;
+                }
+            }
+
+            if (haveSameParent)
+            {
+                for (int i = 0; i < commonParent.childCount; i++)
+                {
+                    var child = commonParent.GetChild(i);
+                    
+                    foreach (var selectedTransform in selectedTransforms)
+                    {
+                        if (child == selectedTransform)
+                        {
+                            transformsList.Add(child);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (var selectedTransform in selectedTransforms)
+                {
+                    transformsList.Add(selectedTransform);
+                }
+            }
+        }
+        
+        private void CopyPasteTransforms(Transform[] copyFromTransforms, Transform[] pasteToTransforms)
+        {
+            if (copyFromTransforms.Length != pasteToTransforms.Length)
+            {
+                Debug.LogError($"[ERROR]<color=red>{nameof(UsefulToolsWindow)}.{nameof(CopyPasteTransforms)}></color> "
+                    + "Number of copied from transforms is not equal to number of pasted to transforms!");
+                return;
+            }
+            
+            if (copyFromTransforms.Length == 0)
+            {
+                Debug.LogError($"[ERROR]<color=red>{nameof(UsefulToolsWindow)}.{nameof(CopyPasteTransforms)}></color> "
+                    + "Nothing to copy!");
+                return;
+            }
+            
+            if (pasteToTransforms.Length == 0)
+            {
+                Debug.LogError($"[ERROR]<color=red>{nameof(UsefulToolsWindow)}.{nameof(CopyPasteTransforms)}></color> "
+                    + "Nowhere to paste!");
+                return;
+            }
+
+            foreach (var t in copyFromTransforms)
+            {
+                if (t == null)
+                {
+                    Debug.LogError($"[ERROR]<color=red>{nameof(UsefulToolsWindow)}.{nameof(CopyPasteTransforms)}></color> "
+                        + "Some of copied transforms are null!");
+                    return;
+                }
+            }
+            
+            foreach (var t in pasteToTransforms)
+            {
+                if (t == null)
+                {
+                    Debug.LogError($"[ERROR]<color=red>{nameof(UsefulToolsWindow)}.{nameof(CopyPasteTransforms)}></color> "
+                        + "Some of pasted transforms are null!");
+                    return;
+                }
+            }
+
+            for (int i = 0; i < copyFromTransforms.Length; i++)
+            {
+                var transformData = new TransformData(copyFromTransforms[i]);
+                transformData.ApplyTo(pasteToTransforms[i]);
             }
         }
 
