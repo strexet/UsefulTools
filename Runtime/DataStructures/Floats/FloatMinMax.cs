@@ -24,10 +24,10 @@ namespace UsefulTools.Runtime.DataStructures.Floats
             this.max = max;
         }
 
-        public FloatMinMax Scale(float scale) => new(min * scale, max * scale);
+        public FloatMinMax Scale(float scale) => new FloatMinMax(min * scale, max * scale);
 
         public override string ToString() => $"[{min}; {max}])";
 
-        public static implicit operator FloatMinMax(float value) => new(value);
+        public static implicit operator FloatMinMax(float value) => new FloatMinMax(value);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace UsefulTools.Runtime
 {
-    public static class FastMath
+    public static class UsefulMath
     {
         public static float Remap(float inValue, float inMin, float inMax, float outMin, float outMax) =>
             outMin + (outMax - outMin) * ((inValue - inMin) / (inMax - inMin));

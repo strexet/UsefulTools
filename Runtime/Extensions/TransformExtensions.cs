@@ -4,7 +4,7 @@ namespace UsefulTools.Runtime.Extensions
 {
     public static class TransformExtensions
     {
-        public static TransformData GetTransformData(this Transform transform) => new(transform);
+        public static TransformData GetTransformData(this Transform transform) => new TransformData(transform);
 
         public static void CopyFrom(this Transform transform, TransformData transformData)
         {

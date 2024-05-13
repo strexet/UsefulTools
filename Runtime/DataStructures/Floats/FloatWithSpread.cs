@@ -36,6 +36,6 @@ namespace UsefulTools.Runtime.DataStructures.Floats
 
         public override string ToString() => $"[{value} (+{spread})]";
 
-        public static implicit operator FloatWithSpread(float value) => new(value);
+        public static implicit operator FloatWithSpread(float value) => new FloatWithSpread(value);
     }
 }
