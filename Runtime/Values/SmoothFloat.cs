@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace UsefulTools.Runtime.Values
 {
-    public class SmoothValue
+    public class SmoothFloat
     {
         public float value { get; private set; }
 
-        public SmoothValue(float startValue) => value = startValue;
+        public SmoothFloat(float startValue) => value = startValue;
 
         public void SetValueImmediate(float value) => this.value = value;
 

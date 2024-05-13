@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace UsefulTools.Runtime.Values
 {
-    public class DynamicValue
+    public class DynamicFloat
     {
         public float Value { get; private set; }
         public bool IsChanging { get; private set; }
 
         private float _nextValue;
 
-        public DynamicValue(float startValue) => ChangeTo(startValue);
+        public DynamicFloat(float startValue) => ChangeTo(startValue);
 
         public void ChangeTo(float value)
         {
@@ -19,7 +19,7 @@ namespace UsefulTools.Runtime.Values
             _nextValue = value;
         }
 
-        public void ChangeTo(float value, float duration) => SmoothChange(value, duration);
+        public void ChangeTo(float value, float duration) => SmoothChange(value, duration).Forget();
 
         public void StopSmoothChange()
         {
@@ -38,9 +38,9 @@ namespace UsefulTools.Runtime.Values
             IsChanging = true;
             _nextValue = nextValue;
 
-            float timer = 0.0f;
-            float startValue = Value;
-            float durationInversed = 1 / duration;
+            var timer = 0.0f;
+            var startValue = Value;
+            var durationInversed = 1 / duration;
 
             while (IsChanging && timer <= duration)
             {

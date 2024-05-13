@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace UsefulTools.Runtime.Values
 {
-    public class SmoothVector
+    public class SmoothVector3
     {
         public Vector3 value { get; private set; }
 
-        public SmoothVector(Vector3 startValue) => value = startValue;
+        public SmoothVector3(Vector3 startValue) => value = startValue;
 
         public void SetValueImmediate(Vector3 value) => this.value = value;
 
