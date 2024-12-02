@@ -22,7 +22,7 @@ namespace UsefulTools.Runtime
     ///     - Рихтер "CLR via C#"
     ///     - Chris Dickinson "Unity 2017 Game optimization"
     /// </remarks>
-    public class Singleton<T> : MonoBehaviour where T : Singleton<T>
+    public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T>
     {
         private static T instance;
 
@@ -38,21 +38,28 @@ namespace UsefulTools.Runtime
                 }
 
                 //Find T
-                var managers = FindObjectsOfType<T>();
+                var managers = FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
                 if (managers != null)
                 {
                     if (managers.Length == 1)
                     {
-                        instance = managers[0];
+                        var manager = managers[0];
+
+                        if (!manager.gameObject.activeSelf)
+                        {
+                            manager.gameObject.SetActive(true);
+                        }
+                        
+                        instance = manager;
 
 #if UNITY_EDITOR
                         if (Application.isPlaying)
 #endif
                         {
-                            DontDestroyOnLoad(instance);
+                            DontDestroyOnLoad(manager);
                         }
 
-                        return instance;
+                        return manager;
                     }
 
                     if (managers.Length > 1)
@@ -117,6 +124,6 @@ namespace UsefulTools.Runtime
 
         protected void OnApplicationQuit() => alive = false;
 
-        protected virtual void Initialization() { }
+        protected abstract void Initialization ();
     }
 }

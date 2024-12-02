@@ -75,7 +75,7 @@ namespace UsefulTools.Editor.Tools
                 return clone;
             }
 
-            var prefabParent = PrefabUtility.GetPrefabParent(clonedObject);
+            var prefabParent = PrefabUtility.GetCorrespondingObjectFromSource(clonedObject);
             if (prefabParent)
             {
                 clone = PrefabUtility.InstantiatePrefab(prefabParent) as GameObject;
@@ -97,8 +97,7 @@ namespace UsefulTools.Editor.Tools
 
         private static void RevertPrefabInstance(GameObject prefabInstance)
         {
-            PrefabUtility.ReconnectToLastPrefab(prefabInstance);
-            PrefabUtility.RevertPrefabInstance(prefabInstance);
+            PrefabUtility.RevertPrefabInstance(prefabInstance, InteractionMode.AutomatedAction);
         }
 
         private enum InstantiatedFrom
