@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UsefulTools.Runtime.Extensions
 {
-    public static class GameObjectExtension
+    public static class GameObjectExtensions
     {
         public static bool IsNull(this GameObject go) => ReferenceEquals(go, null);
 

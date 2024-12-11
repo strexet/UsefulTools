@@ -6,10 +6,10 @@ namespace UsefulTools
     [ExecuteAlways]
     public class ObjectsPlacer : MonoBehaviour
     {
-        public GameObject _originalObj;
+        public GameObject _placedPrefab;
 
         [Space]
-        public List<Transform> _transforms;
+        public List<Transform> _placedTransforms;
         public float _distanceBetween;
         public float _fullLength;
         public Vector3 _placeWorldDirection;
@@ -20,7 +20,7 @@ namespace UsefulTools
         {
             _placeWorldDirection.Normalize();
 
-            if (_originalObj == null)
+            if (_placedPrefab == null)
             {
                 return;
             }
@@ -33,7 +33,7 @@ namespace UsefulTools
             }
 
             _count = Mathf.FloorToInt(_fullLength / _distanceBetween);
-            _transforms ??= new List<Transform>(_count);
+            _placedTransforms ??= new List<Transform>(_count);
 
             AddChildObjects();
             UpdateChildObjectsCount();
@@ -66,29 +66,29 @@ namespace UsefulTools
 
         private void AddChildObjects()
         {
-            if (_transforms.Count != transform.childCount)
+            if (_placedTransforms.Count != transform.childCount)
             {
-                _transforms.Clear();
+                _placedTransforms.Clear();
 
                 for (int i = 0; i < transform.childCount; i++)
-                    _transforms.Add(transform.GetChild(i));
+                    _placedTransforms.Add(transform.GetChild(i));
             }
         }
 
         private void UpdateChildObjectsCount()
         {
-            if (_transforms.Count != _count)
+            if (_placedTransforms.Count != _count)
             {
-                foreach (var t in _transforms)
+                foreach (var t in _placedTransforms)
                     DestroyImmediate(t.gameObject);
 
-                _transforms.Clear();
+                _placedTransforms.Clear();
 
                 for (int i = 0; i < _count; i++)
                 {
-                    var obj = Instantiate(_originalObj, transform);
+                    var obj = Instantiate(_placedPrefab, transform);
                     obj.SetActive(true);
-                    _transforms.Add(obj.transform);
+                    _placedTransforms.Add(obj.transform);
                 }
             }
         }
@@ -113,7 +113,7 @@ namespace UsefulTools
             }
             else
             {
-                _transforms[0].position = center;
+                _placedTransforms[0].position = center;
                 placeCount++;
                 startIndex++;
 
@@ -121,9 +121,9 @@ namespace UsefulTools
                 startOffset = Vector3.zero;
             }
 
-            for (int i = startIndex; i < _transforms.Count; i++)
+            for (int i = startIndex; i < _placedTransforms.Count; i++)
             {
-                var t = _transforms[i];
+                var t = _placedTransforms[i];
 
                 int sign = signCount % 2 == 0 ? 1 : -1;
                 var offset = sign * (startOffset + placeCount * singleOffset);

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UsefulTools.Runtime.Extensions
 {
-    public static class MonoBehaviorExtension
+    public static class MonoBehaviorExtensions
     {
         public static bool IsNull(this MonoBehaviour m) => ReferenceEquals(m, null);
 
