@@ -1,0 +1,12 @@
+{
+  "name": "com.strexet.useful-tools",
+  "version": "1.0.0",
+  "displayName": "Useful Tools",
+  "description": "Various useful tools for Unity 3D.",
+  "unity": "2019.4",
+  "author": {
+    "name": "Petr Strekhletov",
+    "email": "strexet@gmail.com",
+    "url": "https://github.com/strexet/UsefulTools"
+  }
+}
