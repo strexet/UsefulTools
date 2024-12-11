@@ -1,0 +1,16 @@
+{
+    "name": "UsefulTools.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:fff2a4c42f11a4945bc116ffe5bc9134"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
