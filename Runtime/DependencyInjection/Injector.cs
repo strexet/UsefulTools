@@ -1,4 +1,4 @@
-using StrexetGames.UsefulTools.Runtime.DependencyInjection.Attribustes;
+using UsefulTools.Runtime.DependencyInjection.Attribustes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEngine;
 using UsefulTools.Runtime;
 
-namespace StrexetGames.UsefulTools.Runtime.DependencyInjection
+namespace UsefulTools.Runtime.DependencyInjection
 {
 	[DefaultExecutionOrder(-1000)]
 	public class Injector : Singleton<Injector>

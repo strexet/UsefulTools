@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace UsefulTools.Runtime.Extensions {
     public static class Vector2Extensions 

@@ -1,4 +1,4 @@
-namespace StrexetGames.UsefulTools.Runtime.Input
+namespace UsefulTools.Runtime.Input
 {
 	/// <summary>
 	///     Input reader interface for Unity Input package.

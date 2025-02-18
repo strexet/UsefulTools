@@ -1,4 +1,4 @@
-namespace StrexetGames.UsefulTools.Runtime.DependencyInjection
+namespace UsefulTools.Runtime.DependencyInjection
 {
 	public interface IDependencyProvider { }
 }
