@@ -1,6 +1,6 @@
 {
   "name": "com.flying-monolith.useful-tools",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "displayName": "Useful Tools",
   "description": "Various useful tools for Unity 3D.",
   "unity": "2021.3",

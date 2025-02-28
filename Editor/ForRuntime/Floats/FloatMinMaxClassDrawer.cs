@@ -17,5 +17,4 @@ namespace UsefulTools.Runtime.DataStructures.Floats.Editor
             EditorUIHelper.DrawPropertiesInLine(position, minProp, maxProp);
         }
     }
-    }
 }
