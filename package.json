@@ -1,15 +1,15 @@
 {
-  "name": "com.strexet.useful-tools",
-  "version": "0.0.1",
+  "name": "com.flying-monolith.useful-tools",
+  "version": "1.0.0",
   "displayName": "Useful Tools",
   "description": "Various useful tools for Unity 3D.",
-  "unity": "2019.4",
+  "unity": "2021.3",
   "dependencies":
   {
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git"
   },
   "author": {
-    "name": "Strexet",
+    "name": "Petr Strekhletov",
     "email": "strexet@gmail.com",
     "url": "https://github.com/strexet"
   }
