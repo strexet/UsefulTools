@@ -2,7 +2,8 @@
     "name": "UsefulTools.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:fff2a4c42f11a4945bc116ffe5bc9134"
+        "GUID:fff2a4c42f11a4945bc116ffe5bc9134",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
     ],
     "includePlatforms": [
         "Editor"

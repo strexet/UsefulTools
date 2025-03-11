@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace UsefulTools.Editor.Tools
 {
@@ -19,6 +23,7 @@ namespace UsefulTools.Editor.Tools
         private GUIStyle headerTextStyle;
         private string insertionSuffixForName = "";
         private bool isActiveInHierarchy;
+        private bool ignoreCaseInTextSearch = true;
         private string namePart = "NamePart";
         private string newName = "NewName";
         private int numberOfInserts;
@@ -36,6 +41,7 @@ namespace UsefulTools.Editor.Tools
         private string suffix = "";
         private int logLineLength = 120;
         private string hierarchyPath = "";
+        private string searchTextQuarry = "";
         private string childrenCounterNumberFormat = "";
         private Vector3 addToPosition = Vector3.zero;
 
@@ -58,6 +64,7 @@ namespace UsefulTools.Editor.Tools
             DrawLogLine();
             DrawInsertRemoveObjectsMenu();
             DrawSelectChildrenParenMenu();
+            DrawSearchByTextContent();
             DrawGetHierarchyPathOfSelectedObject();
             DrawRenameSelectedObjectsMenu();
             DrawSelectGameObjectsMenu();
@@ -98,6 +105,37 @@ namespace UsefulTools.Editor.Tools
             if (GUILayout.Button("Select By Material"))
             {
                 SelectObjectsByMaterial(commonMaterial, isActiveInHierarchy);
+            }
+
+            GUILayout.Space(bigSpacePixelsCount);
+        }
+        
+        private void DrawSearchByTextContent()
+        {
+            GUILayout.Label("Search By Text Content", headerTextStyle);
+
+            ignoreCaseInTextSearch = EditorGUILayout.Toggle("Ignore Case", ignoreCaseInTextSearch);
+            searchTextQuarry = EditorGUILayout.TextField("Search Quarry", searchTextQuarry);
+
+            var stringComparison = ignoreCaseInTextSearch
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+
+            if (GUILayout.Button("Select Objects by Quarry on Scene"))
+            {
+                var textMeshProObjects = Resources.FindObjectsOfTypeAll<TMP_Text>()
+                                                  .Where(t => t.text.Contains(searchTextQuarry, stringComparison))
+                                                  .Select(t => t.gameObject);
+
+                var uguiTextObjects = Resources.FindObjectsOfTypeAll<Text>()
+                                               .Where(t => t.text.Contains(searchTextQuarry, stringComparison))
+                                               .Select(t => t.gameObject);
+
+                var selectedObjects = new List<GameObject>();
+                selectedObjects.AddRange(textMeshProObjects);
+                selectedObjects.AddRange(uguiTextObjects);
+
+                Selection.objects = selectedObjects.ToArray();
             }
 
             GUILayout.Space(bigSpacePixelsCount);

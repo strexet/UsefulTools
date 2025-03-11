@@ -6,6 +6,7 @@
   "unity": "2021.3",
   "dependencies":
   {
+    "com.unity.textmeshpro": "3.0.0",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git"
   },
   "author": {

@@ -1,15 +1,20 @@
-## [1.0.0] - 2025-02-28
-### First Release
-- Introduced package
+## [1.0.4] - 2025-03-11
+### Changes
+- Added text search in tools window
+- Added TextMeshPro dependency
+
+## [1.0.3] - 2025-03-03
+### Changes
+- Fixed editor asmdef usages
+
+## [1.0.2] - 2025-02-28
+### Changes
+- Fixed bugs
 
 ## [1.0.1] - 2025-02-28
 ### Changes
 - Removed Odin
 
-## [1.0.2] - 2025-02-28
-### Changes
-- Fixed bug
-
-## [1.0.3] - 2025-03-03
-### Changes
-- Updated editor asmdef
+## [1.0.0] - 2025-02-28
+### First Release
+- Introduced package
