@@ -631,6 +631,11 @@ namespace UsefulTools.Editor.Tools
                             }
 
                             var parent = g.transform.parent;
+                            
+                            if (deepSelectChildren && parent != optionalParent)
+                            {
+                                return false;
+                            }
 
                             while (parent != null)
                             {
@@ -639,10 +644,7 @@ namespace UsefulTools.Editor.Tools
                                     return true;
                                 }
 
-                                if (deepSelectChildren)
-                                {
-                                    parent = parent.parent;
-                                }
+                                parent = parent.parent;
                             }
 
                             return false;
