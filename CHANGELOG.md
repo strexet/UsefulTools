@@ -1,3 +1,7 @@
+## [1.0.5] - 2025-04-09
+### Changes
+- Added children deep select for selection tool
+
 ## [1.0.4] - 2025-03-11
 ### Changes
 - Added text search in tools window

@@ -17,6 +17,7 @@ namespace UsefulTools.Editor.Tools
         private string additionToName;
         private readonly float bigSpacePixelsCount = 20f;
         private string byComponentName = "";
+        private bool deepSelectChildren = true;
         private string byObjectName = "";
         private Material commonMaterial;
         private string folderName = "NewFolder";
@@ -314,10 +315,12 @@ namespace UsefulTools.Editor.Tools
             GUILayout.Space(smallSpacePixelsCount);
             GUILayout.Label("By Component Name");
             byComponentName = EditorGUILayout.TextField(byComponentName);
+            GUILayout.Space(smallSpacePixelsCount);
+            deepSelectChildren = EditorGUILayout.Toggle("Deep Select Children", deepSelectChildren);
 
             if (GUILayout.Button("Select"))
             {
-                SelectGameObjectsByNameAndComponent(byObjectName, byComponentName, optionalParents);
+                SelectGameObjectsByNameAndComponent(byObjectName, byComponentName, optionalParents, deepSelectChildren);
             }
 
             GUILayout.Space(bigSpacePixelsCount);
@@ -608,8 +611,10 @@ namespace UsefulTools.Editor.Tools
             Selection.objects = nextSelected.ToArray();
         }
 
-        private void SelectGameObjectsByNameAndComponent(string byObjectName, string byComponentName,
-            List<Transform> optionalParents)
+        private void SelectGameObjectsByNameAndComponent(string byObjectName,
+            string byComponentName,
+            List<Transform> optionalParents,
+            bool deepSelectChildren)
         {
             var properObjects = new List<Object>();
 
@@ -634,7 +639,10 @@ namespace UsefulTools.Editor.Tools
                                     return true;
                                 }
 
-                                parent = parent.parent;
+                                if (deepSelectChildren)
+                                {
+                                    parent = parent.parent;
+                                }
                             }
 
                             return false;
