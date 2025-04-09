@@ -632,19 +632,24 @@ namespace UsefulTools.Editor.Tools
 
                             var parent = g.transform.parent;
                             
-                            if (!deepSelectChildren && parent != optionalParent)
+                            if (deepSelectChildren)
                             {
-                                return false;
-                            }
+                                while (parent != null)
+                                {
+                                    if (parent == optionalParent)
+                                    {
+                                        return true;
+                                    }
 
-                            while (parent != null)
+                                    parent = parent.parent;
+                                }
+                            }
+                            else
                             {
                                 if (parent == optionalParent)
                                 {
                                     return true;
                                 }
-
-                                parent = parent.parent;
                             }
 
                             return false;
