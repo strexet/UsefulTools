@@ -632,7 +632,7 @@ namespace UsefulTools.Editor.Tools
 
                             var parent = g.transform.parent;
                             
-                            if (deepSelectChildren && parent != optionalParent)
+                            if (!deepSelectChildren && parent != optionalParent)
                             {
                                 return false;
                             }
