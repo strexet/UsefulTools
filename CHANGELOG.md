@@ -1,3 +1,7 @@
+## [1.0.6] - 2025-08-11
+### Removed
+- Removed SceneShortcutUtil that was causing visual bugs in editor
+
 ## [1.0.5] - 2025-04-09
 ### Changes
 - Added children deep select for selection tool
